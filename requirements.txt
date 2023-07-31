@@ -3,6 +3,7 @@ numpy
 matplotlib
 bitarray
 python-magic
+unidiff
 mkdocs
 mkdocs-material
 mkdocstrings[python]
