@@ -9,6 +9,21 @@ The complete [documentation](https://unlv-evol.github.io/pareco) of `PaReco` is 
 This tool reuses the classification method of [ReDeBug](https://github.com/dbrumley/redebug). We extend their classification method to not only identify missed security patches, but to also identify missed, duplicated and split cases in any type of patch for the programming languages `Java`, `Python`, `PHP`, `Perl`, `C`, `ShellScript` and `Ruby`. We also look deeper into a patch and classify each file and each hunk in the .diff for that file.
 
 ## Direction Structure
+.
+├── LICENSE
+├── README.md
+├── docs
+├── mkdocs.yml
+├── requirements.txt
+├── run.py
+├── src
+│   ├── bin
+│   ├── constants
+│   ├── helpers
+│   ├── legacy
+│   ├── notebooks
+│   └── tests
+└── 
 
 ## Setting up PaReco
 To setup and test `PaReco` tool on your local computer, following the steps below:
@@ -29,13 +44,14 @@ git clone https://github.com/unlv-evol/PaReco.git
 cd PaReco/
 
 python -m venv venv
-source /venv/bin/activate
+source venv/bin/activate
 
 ```
 Now install the dependencies
 ```
 pip install -r requirements.txt
 ```
+Note: `PaReco` is tested on `python 3.7, 3.8, 3.9 & 3.10`
 
 ## Publications
 `PaReco` is complete open and free to be used and extended by researchers and developers. Incase you this tool in your publication, kindly cite the following papers:
