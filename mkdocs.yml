@@ -4,14 +4,43 @@ site_url: ""
 copyright: Copyright &copy; 2022 - 2023 SEVOL UNLV
 theme:
   name: material
-# extra:
-#   copyright: Copyright &copy; 2016 - 2020 Martin Donath
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline 
+        name: Switch to dark mode
+      primary: teal
+      accent: purple 
+    - scheme: slate 
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode    
+      primary: teal
+      accent: lime
+
+plugins:
+  - social
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/unlv-evol/PaReco
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/unlv-evol
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/unlv-evol
 nav:
     - Overview: index.md
     - Getting Started: about.md
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/unlv-evol/PaReco
-      name: GitHub
 
