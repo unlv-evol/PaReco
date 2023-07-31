@@ -29,13 +29,10 @@ theme:
       primary: teal
       accent: lime
 
-plugins:
-  - social
-
 extra:
   social:
     - icon: fontawesome/brands/github-alt
-      link: https://github.com/unlv-evol/PaReco
+      link: https://github.com/unlv-evol/unlv-evol
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/unlv-evol
     - icon: fontawesome/brands/linkedin
@@ -44,3 +41,22 @@ nav:
     - Overview: index.md
     - Getting Started: about.md
 
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.arithmatex:
+      generic: true
+  - footnotes
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.mark
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+copyright: |
+  &copy; 2023 <a href="https://github.com/unlv-evol"  target="_blank" rel="noopener">UNLV Software Evolution Lab</a>
