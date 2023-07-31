@@ -30,6 +30,11 @@ The **initial version** of `PaReco` is [here](https://github.com/danielogen/patc
 
 ## Setting up PaReco
 To setup and test `PaReco` tool on your local computer, following the steps below:
+### Get the code
+The easiest way is using the `git clone` command
+```
+git clone https://github.com/unlv-evol/PaReco.git
+```
 ### Dependencies
 `PaReco` consist of two categories of depencies i.e. (i) OS specific dependencies and (ii) development dependencies. The OS specific dependency is `libmagic`. To install this dependency on `Ubuntu/Debian` or `MacOS X`, run the shell script in the `bin` directory.
 
@@ -42,15 +47,13 @@ The above code will automatically detect the OS (Linux or MacOS X) and install t
 Before installing development specific dependencies, let's set python virtual enviroment;
 
 ```
-git clone https://github.com/unlv-evol/PaReco.git
-
 cd PaReco/
 
 python -m venv venv
 source venv/bin/activate
 
 ```
-Now install the dependencies
+Now, let's install the dependencies
 ```
 pip install -r requirements.txt
 ```
