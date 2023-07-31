@@ -1,7 +1,6 @@
 site_name: PaReco
 site_description: Patched clones and missed patches among the divergent variants of a software family
 site_url: ""
-copyright: Copyright &copy; 2022 - 2023 SEVOL UNLV
 theme:
   name: material
   features:
