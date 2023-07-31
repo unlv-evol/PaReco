@@ -1,0 +1,9 @@
+requests
+numpy
+matplotlib
+bitarray
+python-magic
+mkdocs
+mkdocs-material
+mkdocstrings[python]
+pytest
