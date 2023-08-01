@@ -32,7 +32,7 @@ The **initial version** of `PaReco` is [here](https://github.com/danielogen/patc
 ## Setting up PaReco
 To setup and test `PaReco` tool on your local computer, following the steps below:
 ### Get the code
-The easiest way is using the `git clone` command
+The easiest way is using the `git clone` command:
 ```
 git clone https://github.com/unlv-evol/PaReco.git
 ```
