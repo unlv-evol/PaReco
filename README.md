@@ -20,6 +20,7 @@ This tool reuses the classification method of [ReDeBug](https://github.com/dbrum
 ├── src
 │   ├── bin
 │   ├── constants
+|   |-- core
 │   ├── helpers
 │   ├── legacy
 │   ├── notebooks
@@ -62,7 +63,7 @@ Note: `PaReco` is tested on `python 3.7, 3.8, 3.9 & 3.10`
 ## Publications
 `PaReco` is completely open and free to be used and extended by researchers and developers. Incase you use this tool in your publication, kindly cite the following papers:
 
-1. Ramkisoen, P. K., Businge, J., van Bladel, B., Decan, A., Demeyer, S., De Roover, C., & Khomh, F. (2022, November). [PaReco: patched clones and missed patches among the divergent variants of a software family](https://dl.acm.org/doi/abs/10.1145/3540250.3549112). In Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (pp. 646-658).
+1. Ramkisoen, P. K., Businge, J., van Bladel, B., Decan, A., Demeyer, S., De Roover, C., & Khomh, F. (2022, November). [PaReco: patched clones and missed patches among the divergent variants of a software family](https://dl.acm.org/doi/abs/10.1145/3540250.3549112). In _Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering (pp. 646-658)_.
 
 ## Contributing
 Join us in building this tool. Contribution is encourage for OSS community. If interested, take a look at our [contribution guidelines](https://)
