@@ -3,7 +3,7 @@
 ## Introduction
 `PaReco`: Patched Clones and Missed Patches among the Divergent Variants of a Software Family. This tool relies on clone detection to mine cases of missed opportunity and effort duplication from a pool of patches.
 
-The complete [documentation](https://unlv-evol.github.io/pareco) of `PaReco` is available [here](https://unlv-evol.github.io/pareco)
+The complete [documentation](https://unlv-evol.github.io/PaReco) of `PaReco` is available [here](https://unlv-evol.github.io/PaReco)
 
 ## Extending ReDebug
 This tool reuses the classification method of [ReDeBug](https://github.com/dbrumley/redebug). We extend their classification method to not only identify missed security patches, but to also identify missed, duplicated and split cases in any type of patch for the programming languages `Java`, `Python`, `PHP`, `Perl`, `C`, `ShellScript` and `Ruby`. We also look deeper into a patch and classify each file and each hunk in the .diff for that file.
@@ -27,13 +27,14 @@ This tool reuses the classification method of [ReDeBug](https://github.com/dbrum
 │   └── tests
 └── 
 ```
-The **initial version** of `PaReco` is available[here](https://github.com/danielogen/patchesandmissedmatches) or in the `legacy` directory of this repository `/src/legacy`.
+The **initial version** of `PaReco` is available [here](https://github.com/danielogen/patchesandmissedmatches) or in the `legacy` directory of this repository `/src/legacy`.
 
 ## Setting up PaReco
 To setup and test `PaReco` tool on your local computer, following the steps below:
 ### Get the code
 The easiest way is using the `git clone` command:
-```
+
+```bash
 git clone https://github.com/unlv-evol/PaReco.git
 ```
 ### Dependencies
