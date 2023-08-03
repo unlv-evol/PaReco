@@ -1,7 +1,7 @@
 # common.py
 # common variables and functions
-
-# Jiyong Jang, 2012
+# Initial verision by Jiyong Jang, 2012
+# modified by Daniel Ogenrwot, 2023
 
 import os
 import re
