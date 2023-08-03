@@ -7,15 +7,16 @@ import os
 import re
 import pickle
 from collections import namedtuple
+from constants.constant import Constant
 
 
 # global variables
-ngram_size   = 4
-context_line = 10
-verbose_mode = False
-magic_cookie = None
-bloomfilter_size = 2097152
-min_mn_ratio = 32
+ngram_size   = Constant.NGRAM_SIZE
+context_line = Constant.CONTEXT_LINE
+verbose_mode = Constant.VERBOSE_MODE
+magic_cookie = Constant.MAGIC_COOKIE
+bloomfilter_size = Constant.BLOOMFILTER_SIZE
+min_mn_ratio = Constant.MIN_MN_RATIO
 
 PatchInfo = namedtuple('PatchInfo',\
         ['file_path', 'file_ext', 'orig_lines', 'norm_lines', 'hash_list'])
