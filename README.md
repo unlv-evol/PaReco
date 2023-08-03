@@ -16,6 +16,7 @@ This tool reuses the classification method of [ReDeBug](https://github.com/dbrum
 ├── docs
 ├── mkdocs.yml
 ├── requirements.txt
+├── tokens-example.txt
 ├── PaReco.py
 ├── src
 │   ├── bin
