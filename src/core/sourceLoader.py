@@ -8,7 +8,7 @@ import os
 import re
 import time
 from collections import defaultdict
-import common
+from utils import common
 
 try:
     import bitarray
