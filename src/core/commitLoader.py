@@ -23,28 +23,39 @@ except ImportError as err:
     print (err)
     sys.exit(-1)
 
-"""
-    apiRequest(url)
-    
-    @url - the url for the request
-"""
+
 def apiRequest(url, token):
+    '''Takes the URL for the request and token
+    Examples:
+        >> apiRequest("https://github.com/linkedin", "xxxxxxxx")
+    Args:
+        url (String): the url for the request
+        token (String): GitHub API token
+    Return:
+        response body of the request on json format
+    '''
     header = {'Authorization': 'token %s' % token}
     response = requests.get(url, headers=header)
     jsonResponse = json.loads(response.content)
     return jsonResponse
 
-"""
-    getCommitsAhead(mainline, fork)
-    
+
+def getCommitsAhead(mainline, fork, commitToken, compareToken):
+    """
     Get the commits that the mainline is ahead of the variant
+
+    Examples:
+        >> getCommitsAhead(mainline, fork)
+    Args:
+        mainline (String): the mainline author/repo
+        fork (String): the fork author/repo 
+        commitToken (String): the token used for constructin the compareUrl
+        compareToken (String): the token used for comparing mainline and fork
     
-    @mainline - the mainline author/repo
-    @fork - the fork author/repo 
-    @commitToken - the token used for constructin the compareUrl
-    @compareToken - the token used for comparing mainline and fork
-"""
-def getCommitsAhead(mainline, fork, commitToken, compareToken):  
+    Return:
+        List of commits a head 
+    """  
+
     compareUrl = f"{constant.GITHUB_BASE_URL}{fork}/compare/master...{mainline.split('/')[0]}:master?access_token={compareToken}"
 
     jsonCommits = apiRequest(compareUrl)
