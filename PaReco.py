@@ -236,19 +236,19 @@ class PaReco:
                             emptyFilePath = ''
 
                             if file_ext == 2:
-                                emptyFilePath = 'EmptyFiles/EmptyC.c'
+                                emptyFilePath = 'src/utils/empty/EmptyC.c'
                             elif file_ext == 3:
-                                emptyFilePath = 'EmptyFiles/EmptyJava.java'
+                                emptyFilePath = 'src/utils/empty/EmptyJava.java'
                             elif file_ext == 4:
-                                emptyFilePath = 'EmptyFiles/EmptyShell.sh'
+                                emptyFilePath = 'src/utils/empty/EmptyShell.sh'
                             elif file_ext == 5:
-                                emptyFilePath = 'EmptyFiles/EmptyPython.py'
+                                emptyFilePath = 'src/utils/empty/EmptyPython.py'
                             elif file_ext == 6:
-                                emptyFilePath = 'EmptyFiles/EmptyPerl.pl'
+                                emptyFilePath = 'src/utils/empty/EmptyPerl.pl'
                             elif file_ext == 7:
-                                emptyFilePath = 'EmptyFiles/EmptyPHP.php'
+                                emptyFilePath = 'src/utils/empty/EmptyPHP.php'
                             elif file_ext == 8:
-                                emptyFilePath = 'EmptyFiles/EmptyRuby.rb'
+                                emptyFilePath = 'src/utils/empty/EmptyRuby.rb'
 
                             if len(files[file]) != 0:
                                 try:
