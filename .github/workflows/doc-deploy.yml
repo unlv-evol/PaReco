@@ -1,4 +1,4 @@
-name: ci 
+name: doc-deploy 
 on:
   push:
     branches:
