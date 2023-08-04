@@ -40,6 +40,13 @@ extra:
 nav:
     - Overview: index.md
     - Getting Started: getting_started.md
+    - Reference:
+          - 'Source Loader': 'reference/source_loader.md'
+          - 'Commit Loader': 'reference/commit_loader.md'
+          - 'Data Loader': 'reference/data_loader.md'
+          - 'Patch Extractor': 'reference/patch_extractor.md'
+          - 'Classifier': 'reference/classifier.md'
+          - 'Common': 'reference/common.md'
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -60,6 +67,16 @@ markdown_extensions:
   - def_list
   - pymdownx.tasklist:
       custom_checkbox: true
+
+plugins:
+- mkdocstrings:
+    enabled: !ENV [ENABLE_MKDOCSTRINGS, true]
+    custom_templates: templates
+    default_handler: python
+    handlers:
+      python:
+        options:
+          show_source: false
 
 copyright: |
   &copy; 2023 <a href="https://github.com/unlv-evol"  target="_blank" rel="noopener">UNLV Software Evolution Lab</a>
