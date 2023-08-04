@@ -67,10 +67,10 @@ They can be set in the `tokens.txt` file or by directly inserting it in the toke
 
 ### Using Notebooks
 There are 3 notebooks that are at the heart of this tool: `/legacy/src/getData.ipynb`, `/legacy/src/classify.ipynb` and `/legac/src/analysis.ipynb`: 
-- `getData.ipynb` extracts the pull request data from the GitHub API and stores it in Repos_prs
--  After which `classify.ipynb` extracts the files from for each pull request, the `diffs` for each **modified/added/removed** file and classifies the `hunk` and `files`.
-- Then `analysis.ipynb` does the last classification for the `patch` and calcualtes the total classification per repository and plots the results
-- Finally, `timeLag.ipynb` calcualtes the techinical lag for each `patch`.
+* `getData.ipynb` extracts the pull request data from the GitHub API and stores it in Repos_prs
+* After which `classify.ipynb` extracts the files from for each pull request, the `diffs` for each **modified/added/removed** file and classifies the `hunk` and `files`.
+* Then `analysis.ipynb` does the last classification for the `patch` and calcualtes the total classification per repository and plots the results
+* Finally, `timeLag.ipynb` calcualtes the techinical lag for each `patch`.
 
 #### Examples
 The folder `/legacy/Examples` contains a Jupyter notebook that can be used to quickly run the tool and classify one or more pull requests for two variant repositories. A simple class `PaReco` exists that does the classification. Running the notebook for source and target variant `mrbrdo/rack-webconsole -> codegram/rack-webconsole` and pull request 2 will give an output as:
@@ -87,8 +87,8 @@ Patch classification ==> ED
 
 Additionally, the classification distribution will also be plotted.
 To use this notebook for classification, you need to have:
--  The `source` and `target` repository names, 
--  The `list of pull requests`
--  The `cut off date`.
+*  The `source` and `target` repository names, 
+*  The `list of pull requests`
+*  The `cut off date`.
 
 **NB:** Create the `Repos_files` and `Repos_results` directories before running the examples.
