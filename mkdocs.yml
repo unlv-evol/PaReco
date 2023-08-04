@@ -57,6 +57,9 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
 copyright: |
   &copy; 2023 <a href="https://github.com/unlv-evol"  target="_blank" rel="noopener">UNLV Software Evolution Lab</a>
