@@ -26,6 +26,8 @@ ContextInfo = namedtuple('ContextInfo',\
         ['source_id', 'prev_context_line', 'start_line', 'end_line', 'next_context_line'])
 
 class FileExt:
+    '''Set some index to file types supported by the tool
+    '''
     NonText     = 0
     Text        = 1
     C           = 2
@@ -66,6 +68,10 @@ def verbose_print(text):
 def fnv1a_hash(string):
     '''
     FNV-1a 32bit hash (http://isthe.com/chongo/tech/comp/fnv/)
+    Args:
+        string: the string to be hashed
+    Return:
+        hash value
     '''
     hash = 2166136261
     for c in string:
@@ -77,6 +83,10 @@ def fnv1a_hash(string):
 def djb2_hash(string):
     '''
     djb2 hash (http://www.cse.yorku.ca/~oz/hash.html)
+    Args:
+        string: the string to be hashed
+    Return:
+        hash value
     '''
     hash = 5381
     for c in string:
@@ -87,6 +97,11 @@ def djb2_hash(string):
 def sdbm_hash(string):
     '''
     sdbm hash (http://www.cse.yorku.ca/~oz/hash.html)
+    
+    Args:
+        string: the string to be hashed
+    Return:
+        hash value
     '''
     hash = 0
     for c in string:
