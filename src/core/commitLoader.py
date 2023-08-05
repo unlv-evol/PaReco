@@ -62,13 +62,13 @@ def getCommitsAhead(mainline, fork, commitToken, compareToken):
 
     return jsonCommits["commits"]
 
-"""
-    getCommitFiles(commits, getCommitToken)
-    
-    Get the files for each commit
-    
-    @commits - the commits for which files need to be retrieved
-    @getCommitToken - the token used for the qpi reqiest to get the commit
+
+def getCommit(commit, getCommitToken):
+    """Get the files for each commit
+
+    Args:
+        commits: the commits for which files need to be retrieved
+        getCommitToken: the token used for the qpi request to get the commit
     
     commitFilesDict={
         "sha": {
@@ -77,8 +77,7 @@ def getCommitsAhead(mainline, fork, commitToken, compareToken):
         }
         
     }
-"""
-def getCommit(commit, getCommitToken):
+    """ 
     sha = commit["sha"]
     commitUrl = commit['url']
 
@@ -90,16 +89,16 @@ def getCommit(commit, getCommitToken):
 
     return commit
 
-"""
+def findFile(filename, repo, token, sha):
+    """
     findFile(filename, repo)
-    
     Check if the file exists in the other repository
     
-    @filename - the file path to be checked for existence
-    @repo - the repository in which the existence of the file must be checked
-    @checkFileExistsToken - the token for the api request
-"""
-def findFile(filename, repo, token, sha):
+    Args:
+        filename: the file path to be checked for existence
+        repo: the repository in which the existence of the file must be checked
+        checkFileExistsToken: the token for the api request
+    """
     requestUrl = f"{constant.GITHUB_BASE_URL}{repo}/contents/{filename}?ref={sha}"
     response = apiRequest(requestUrl,token) 
     path = ''
@@ -109,14 +108,15 @@ def findFile(filename, repo, token, sha):
     except Exception as e:
         return False
 
-"""
+
+def fileName(name):
+    """
     fileName(name)
-    
     Extract the file name used for storing the file
     
-    @name - the patch retrieved from the commit api for the file
-"""
-def fileName(name):
+    Args:
+        name: the patch retrieved from the commit api for the file
+    """
     if name.startswith('.'):
         return (name[1:])
     elif '/' in name:
@@ -136,15 +136,16 @@ def fileDir(name):
     else: 
         sys.exit(1)
     
-"""
+
+def getPatch(file, storageDir, fileName):
+    """
     get_patch(url, token)
-    
     Send a request to the github api to find retrieve the patch of a commit and saves it to a .patch file
     
-    @url - the url for the request that will be send to GitHub
-    @token - the authentication tolen that will be used in the request
-"""
-def getPatch(file, storageDir, fileName):
+    Args:
+        url: the url for the request that will be send to GitHub
+        token: the authentication tolen that will be used in the request
+    """
     if not os.path.exists(storageDir):
         os.makedirs(storageDir)
         f = open(storageDir + fileName, 'w')
@@ -169,6 +170,10 @@ def saveFile(file, storageDir, fileName):
 def get_file_type(file_path):
     '''
     Guess a file type based upon a file extension (mimetypes module)
+    Args:
+        file_path: the file path
+    Return:
+        magic_ext
     '''
     ext = file_path.split('.')[-1]
     magic_ext = None
