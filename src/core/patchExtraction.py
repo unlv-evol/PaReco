@@ -11,6 +11,17 @@ class GetOutOfLoop(Exception):
 
 
 def get_response(url, token_list, ct):
+    '''
+    get content of the requested endpoint
+
+    Args:
+        url (String): url of the request
+        token_list (list): GitHub API token list
+        ct (int): token counter
+    
+    Return:
+        Jsondata (object): json data 
+    '''
     jsonData = None
 
     #     token_list, len_tokens = tokens()
