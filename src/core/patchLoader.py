@@ -22,6 +22,13 @@ class PatchLoader(object):
     def traverse(self, patch_path, typePatch):
         '''
         Traverse patch files
+
+        Args:
+            patch_path: path to the patch 
+            typePatch: type of the patch
+        
+        Return:
+            _npatch (int): number of patch
         '''
 #         common.verbose_print('[+] traversing patch files')
         start_time = time.time()
@@ -56,6 +63,9 @@ class PatchLoader(object):
     def _process_buggy(self, patch_path):
         '''
         Normalize a patch file and build a hash list
+
+        Args:
+            patch_path (String): path to the patch
         '''
         patch_filename = patch_path.split('/')[-1]
         patch_file = open(patch_path, 'r')
@@ -153,6 +163,9 @@ class PatchLoader(object):
     def _process_patch(self, patch_path):
         '''
         Normalize a patch file and build a hash list
+        
+        Args:
+            patch_path (String): path to the patch
         '''
         patch_filename = patch_path.split('/')[-1]
         patch_file = open(patch_path, 'r')
@@ -254,6 +267,13 @@ class PatchLoader(object):
     def _normalize(self, patch, ext):
         '''
         Normalize a patch file
+        
+        Args:
+            patch_path (String): path to the patch
+            ext (String): file extension
+        
+        Return:
+            patch (String): patch file which is normalized and converted to lowercase
         '''
         # Language-specific optimization
         if ext==common.FileExt.C or ext==common.FileExt.Java:
@@ -282,6 +302,12 @@ class PatchLoader(object):
     def _build_hash_list(self, diff_norm_lines):
         '''
         Build a hash list
+
+        Args:
+            diff_norm_lines (String): diff norm lines
+        
+        Return:
+            hash_list: 
         '''
         hash_list = []
         num_ngram = len(diff_norm_lines) - common.ngram_size + 1
@@ -303,6 +329,10 @@ class PatchLoader(object):
     def _get_file_type(self, file_path):
         '''
         Guess a file type based upon a file extension (mimetypes module)
+        Args:
+            file_path: the file path
+        Return:
+            magic_ext
         '''
         file_type, encoding = mimetypes.guess_type(file_path)
         magic_ext = None

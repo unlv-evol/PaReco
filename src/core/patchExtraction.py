@@ -15,7 +15,6 @@ def get_response(url, token_list, ct):
 
     #     token_list, len_tokens = tokens()
     len_tokens = len(token_list)
-    # changes here are inline with the library change from urllib.request->requests
     try:
         ct = ct % len_tokens
         headers = {'Authorization': 'Bearer {}'.format(token_list[ct])}
