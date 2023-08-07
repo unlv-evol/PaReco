@@ -67,8 +67,8 @@ def getCommit(commit, getCommitToken):
     """Get the files for each commit
 
     Args:
-        commits: the commits for which files need to be retrieved
-        getCommitToken: the token used for the qpi request to get the commit
+        commits (String): the commits for which files need to be retrieved
+        getCommitToken (String): the token used for the qpi request to get the commit
     
     commitFilesDict={
         "sha": {
@@ -95,9 +95,9 @@ def findFile(filename, repo, token, sha):
     Check if the file exists in the other repository
     
     Args:
-        filename: the file path to be checked for existence
-        repo: the repository in which the existence of the file must be checked
-        checkFileExistsToken: the token for the api request
+        filename (String): the file path to be checked for existence
+        repo (String): the repository in which the existence of the file must be checked
+        checkFileExistsToken (String): the token for the api request
     """
     requestUrl = f"{constant.GITHUB_BASE_URL}{repo}/contents/{filename}?ref={sha}"
     response = apiRequest(requestUrl,token) 
@@ -115,7 +115,7 @@ def fileName(name):
     Extract the file name used for storing the file
     
     Args:
-        name: the patch retrieved from the commit api for the file
+        name (String): the patch retrieved from the commit api for the file
     """
     if name.startswith('.'):
         return (name[1:])
@@ -171,7 +171,7 @@ def get_file_type(file_path):
     '''
     Guess a file type based upon a file extension (mimetypes module)
     Args:
-        file_path: the file path
+        file_path (String): the file path
     Return:
         magic_ext
     '''
