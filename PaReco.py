@@ -9,7 +9,7 @@ from src.core import dataLoader as dataloader
 from src.utils import classifier as classifier
 from src.utils import totals as totals
 from src.utils import analysis as analysis
-from src.core.patchExtraction import divergence_date, pr_patches
+from src.core.patchExtractor import divergence_date, pr_patches
     
 class PaReco:
     def __init__(self, params):
