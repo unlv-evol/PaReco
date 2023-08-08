@@ -44,7 +44,7 @@ nav:
           - 'Source Loader': 'reference/source_loader.md'
           - 'Commit Loader': 'reference/commit_loader.md'
           - 'Data Loader': 'reference/data_loader.md'
-          - 'Patch Extractor': 'reference/patch_extraction.md'
+          - 'Patch Extractor': 'reference/patch_extractor.md'
           - 'Classifier': 'reference/classifier.md'
           - 'Common': 'reference/common.md'
 

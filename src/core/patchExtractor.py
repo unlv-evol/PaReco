@@ -1,7 +1,5 @@
-
 import requests
 import json
-
 from dateutil import parser
 from constants import constant
 
@@ -9,10 +7,8 @@ from constants import constant
 class GetOutOfLoop(Exception):
     pass
 
-
 def get_response(url, token_list, ct):
-    '''
-    get content of the requested endpoint
+    '''get content of the requested endpoint
 
     Args:
         url (String): url of the request
@@ -24,7 +20,7 @@ def get_response(url, token_list, ct):
     '''
     jsonData = None
 
-    #     token_list, len_tokens = tokens()
+    # token_list, len_tokens = tokens()
     len_tokens = len(token_list)
     try:
         ct = ct % len_tokens
@@ -102,7 +98,7 @@ def pr_patches(repo, diverge_date, least_date, token_list, ct):
         least_date (datetime): date of last commit
         token_list (String): list of GitHub API tokens
         ct (int): token counter
-    Returns:
+    Return:
         pr (list): list of pull request
         pr_all_merged (list): list of all pull requests
         title (list): list of pull request titles 
@@ -129,8 +125,7 @@ def pr_patches(repo, diverge_date, least_date, token_list, ct):
         while True:
             # I rearranged the order of the parameters since the previous ordering would only yield 30 
             # objects (pull requests) in the arraylist instead of 100
-            url = f'{constant.GITHUB_BASE_URL}{repo}/pulls?page={str(
-                p)}&per_page=100&state=closed&sort=created&direction=desc'
+            url = f"{constant.GITHUB_BASE_URL}{repo}/pulls?page={str(p)}&per_page=100&state=closed&sort=created&direction=desc"
             p = p + 1
             count = 1
 
@@ -178,7 +173,6 @@ def pr_patches(repo, diverge_date, least_date, token_list, ct):
                         print(e)
             if count == 0:
                 break
-
     except GetOutOfLoop:
         pass
 
