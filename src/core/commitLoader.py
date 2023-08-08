@@ -67,7 +67,7 @@ def getCommit(commit, getCommitToken):
     """Get the files for each commit
 
     Args:
-        commits (String): the commits for which files need to be retrieved
+        commit (String): the commits for which files need to be retrieved
         getCommitToken (String): the token used for the qpi request to get the commit
     
     commitFilesDict={
@@ -97,7 +97,8 @@ def findFile(filename, repo, token, sha):
     Args:
         filename (String): the file path to be checked for existence
         repo (String): the repository in which the existence of the file must be checked
-        checkFileExistsToken (String): the token for the api request
+        token (String): the token for the api request
+        sha (String): the GitHub sha
     """
     requestUrl = f"{constant.GITHUB_BASE_URL}{repo}/contents/{filename}?ref={sha}"
     response = apiRequest(requestUrl,token) 
