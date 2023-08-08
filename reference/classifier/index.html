@@ -1,0 +1,1610 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Patched clones and missed patches among the divergent variants of a software family">
+      
+      
+      
+      
+        <link rel="prev" href="../patch_extractor/">
+      
+      
+        <link rel="next" href="../common/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.21">
+    
+    
+      
+        <title>Classifier - PaReco</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.eebd395e.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ecc896b0.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="lime">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#classifier" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="PaReco" class="md-header__button md-logo" aria-label="PaReco" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PaReco
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Classifier
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="lime"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../.." class="md-tabs__link">
+      Overview
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../getting_started/" class="md-tabs__link">
+      Getting Started
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../source_loader/" class="md-tabs__link md-tabs__link--active">
+        Reference
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PaReco" class="md-nav__button md-logo" aria-label="PaReco" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    PaReco
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../source_loader/" class="md-nav__link">
+        Source Loader
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commit_loader/" class="md-nav__link">
+        Commit Loader
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data_loader/" class="md-nav__link">
+        Data Loader
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../patch_extractor/" class="md-nav__link">
+        Patch Extractor
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Classifier
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Classifier
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier" class="md-nav__link">
+    src.core.classifier
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.apiRequest" class="md-nav__link">
+    apiRequest()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.classify_hunk" class="md-nav__link">
+    classify_hunk()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.classify_patch" class="md-nav__link">
+    classify_patch()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.find_hunk_matches" class="md-nav__link">
+    find_hunk_matches()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.find_hunk_matches_w_important_hash" class="md-nav__link">
+    find_hunk_matches_w_important_hash()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.getFileBeforePatch" class="md-nav__link">
+    getFileBeforePatch()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.getFirstLastCommit" class="md-nav__link">
+    getFirstLastCommit()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.get_ext" class="md-nav__link">
+    get_ext()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.processPatch" class="md-nav__link">
+    processPatch()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.save_patch" class="md-nav__link">
+    save_patch()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.core.classifier.unified_diff" class="md-nav__link">
+    unified_diff()
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../common/" class="md-nav__link">
+        Common
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="classifier">Classifier</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+<a id="src.core.classifier"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.apiRequest" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">apiRequest</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>apiRequest
+To make api requests to the GitHub API</p>
+<p>@url - the url for the API
+@token - GitHub API token</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-0-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-0-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-0-100">100</a></span>
+<span class="normal"><a href="#__codelineno-0-101">101</a></span>
+<span class="normal"><a href="#__codelineno-0-102">102</a></span>
+<span class="normal"><a href="#__codelineno-0-103">103</a></span>
+<span class="normal"><a href="#__codelineno-0-104">104</a></span>
+<span class="normal"><a href="#__codelineno-0-105">105</a></span>
+<span class="normal"><a href="#__codelineno-0-106">106</a></span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="k">def</span> <span class="nf">apiRequest</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">    apiRequest</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">    To make api requests to the GitHub API</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a><span class="sd">    @url - the url for the API</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a><span class="sd">    @token - GitHub API token</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>    <span class="n">header</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;token </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">token</span><span class="p">}</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.classify_hunk" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">classify_hunk</span><span class="p">(</span><span class="n">class_patch</span><span class="p">,</span> <span class="n">class_buggy</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>classify_hunk
+To classify a hunk</p>
+<p>@class_patch
+@class_buggy</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-230">230</a></span>
+<span class="normal"><a href="#__codelineno-0-231">231</a></span>
+<span class="normal"><a href="#__codelineno-0-232">232</a></span>
+<span class="normal"><a href="#__codelineno-0-233">233</a></span>
+<span class="normal"><a href="#__codelineno-0-234">234</a></span>
+<span class="normal"><a href="#__codelineno-0-235">235</a></span>
+<span class="normal"><a href="#__codelineno-0-236">236</a></span>
+<span class="normal"><a href="#__codelineno-0-237">237</a></span>
+<span class="normal"><a href="#__codelineno-0-238">238</a></span>
+<span class="normal"><a href="#__codelineno-0-239">239</a></span>
+<span class="normal"><a href="#__codelineno-0-240">240</a></span>
+<span class="normal"><a href="#__codelineno-0-241">241</a></span>
+<span class="normal"><a href="#__codelineno-0-242">242</a></span>
+<span class="normal"><a href="#__codelineno-0-243">243</a></span>
+<span class="normal"><a href="#__codelineno-0-244">244</a></span>
+<span class="normal"><a href="#__codelineno-0-245">245</a></span>
+<span class="normal"><a href="#__codelineno-0-246">246</a></span>
+<span class="normal"><a href="#__codelineno-0-247">247</a></span>
+<span class="normal"><a href="#__codelineno-0-248">248</a></span>
+<span class="normal"><a href="#__codelineno-0-249">249</a></span>
+<span class="normal"><a href="#__codelineno-0-250">250</a></span>
+<span class="normal"><a href="#__codelineno-0-251">251</a></span>
+<span class="normal"><a href="#__codelineno-0-252">252</a></span>
+<span class="normal"><a href="#__codelineno-0-253">253</a></span>
+<span class="normal"><a href="#__codelineno-0-254">254</a></span>
+<span class="normal"><a href="#__codelineno-0-255">255</a></span>
+<span class="normal"><a href="#__codelineno-0-256">256</a></span>
+<span class="normal"><a href="#__codelineno-0-257">257</a></span>
+<span class="normal"><a href="#__codelineno-0-258">258</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-230" name="__codelineno-0-230"></a><span class="k">def</span> <span class="nf">classify_hunk</span><span class="p">(</span><span class="n">class_patch</span><span class="p">,</span> <span class="n">class_buggy</span><span class="p">):</span>
+<a id="__codelineno-0-231" name="__codelineno-0-231"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-232" name="__codelineno-0-232"></a><span class="sd">    classify_hunk</span>
+<a id="__codelineno-0-233" name="__codelineno-0-233"></a><span class="sd">    To classify a hunk</span>
+<a id="__codelineno-0-234" name="__codelineno-0-234"></a>
+<a id="__codelineno-0-235" name="__codelineno-0-235"></a><span class="sd">    @class_patch</span>
+<a id="__codelineno-0-236" name="__codelineno-0-236"></a><span class="sd">    @class_buggy</span>
+<a id="__codelineno-0-237" name="__codelineno-0-237"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-238" name="__codelineno-0-238"></a>
+<a id="__codelineno-0-239" name="__codelineno-0-239"></a>    <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<a id="__codelineno-0-240" name="__codelineno-0-240"></a>    <span class="k">if</span> <span class="n">class_patch</span> <span class="o">==</span> <span class="s1">&#39;ED&#39;</span> <span class="ow">and</span> <span class="n">class_buggy</span> <span class="o">==</span><span class="s1">&#39;MO&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-241" name="__codelineno-0-241"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;SP&#39;</span>
+<a id="__codelineno-0-242" name="__codelineno-0-242"></a>    <span class="k">if</span> <span class="n">class_buggy</span> <span class="o">==</span> <span class="s1">&#39;MO&#39;</span> <span class="ow">and</span> <span class="n">class_patch</span> <span class="o">==</span> <span class="s1">&#39;MC&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-243" name="__codelineno-0-243"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;MO&#39;</span>
+<a id="__codelineno-0-244" name="__codelineno-0-244"></a>    <span class="k">if</span> <span class="n">class_buggy</span> <span class="o">==</span> <span class="s1">&#39;MC&#39;</span> <span class="ow">and</span> <span class="n">class_patch</span> <span class="o">==</span> <span class="s1">&#39;ED&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-245" name="__codelineno-0-245"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;ED&#39;</span>
+<a id="__codelineno-0-246" name="__codelineno-0-246"></a>    <span class="k">if</span> <span class="n">class_buggy</span> <span class="o">==</span> <span class="s1">&#39;MC&#39;</span> <span class="ow">and</span> <span class="n">class_patch</span> <span class="o">==</span> <span class="s1">&#39;MO&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-247" name="__codelineno-0-247"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;MO&#39;</span>
+<a id="__codelineno-0-248" name="__codelineno-0-248"></a>    <span class="k">if</span> <span class="n">class_buggy</span> <span class="o">==</span> <span class="s1">&#39;ED&#39;</span> <span class="ow">and</span> <span class="n">class_patch</span> <span class="o">==</span> <span class="s1">&#39;MC&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-249" name="__codelineno-0-249"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;ED&#39;</span>
+<a id="__codelineno-0-250" name="__codelineno-0-250"></a>    <span class="k">if</span> <span class="n">class_buggy</span> <span class="o">==</span> <span class="s1">&#39;MC&#39;</span> <span class="ow">and</span> <span class="n">class_patch</span> <span class="o">==</span> <span class="s1">&#39;MC&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-251" name="__codelineno-0-251"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;NA&#39;</span>
+<a id="__codelineno-0-252" name="__codelineno-0-252"></a>    <span class="k">if</span> <span class="n">class_patch</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">class_buggy</span> <span class="o">!=</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-253" name="__codelineno-0-253"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="n">class_buggy</span>
+<a id="__codelineno-0-254" name="__codelineno-0-254"></a>    <span class="k">if</span> <span class="n">class_patch</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">class_buggy</span> <span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-255" name="__codelineno-0-255"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="n">class_patch</span>
+<a id="__codelineno-0-256" name="__codelineno-0-256"></a>    <span class="k">if</span> <span class="n">class_patch</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="n">class_buggy</span> <span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-257" name="__codelineno-0-257"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;NA&#39;</span>
+<a id="__codelineno-0-258" name="__codelineno-0-258"></a>    <span class="k">return</span> <span class="n">finalClass</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.classify_patch" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">classify_patch</span><span class="p">(</span><span class="n">hunk_classifications</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>classify_patch
+To classify a patch based on the hunks</p>
+<p>@hunk_classifications - the classifications for the different hunks in the .diff of a file changed in a PR</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-261">261</a></span>
+<span class="normal"><a href="#__codelineno-0-262">262</a></span>
+<span class="normal"><a href="#__codelineno-0-263">263</a></span>
+<span class="normal"><a href="#__codelineno-0-264">264</a></span>
+<span class="normal"><a href="#__codelineno-0-265">265</a></span>
+<span class="normal"><a href="#__codelineno-0-266">266</a></span>
+<span class="normal"><a href="#__codelineno-0-267">267</a></span>
+<span class="normal"><a href="#__codelineno-0-268">268</a></span>
+<span class="normal"><a href="#__codelineno-0-269">269</a></span>
+<span class="normal"><a href="#__codelineno-0-270">270</a></span>
+<span class="normal"><a href="#__codelineno-0-271">271</a></span>
+<span class="normal"><a href="#__codelineno-0-272">272</a></span>
+<span class="normal"><a href="#__codelineno-0-273">273</a></span>
+<span class="normal"><a href="#__codelineno-0-274">274</a></span>
+<span class="normal"><a href="#__codelineno-0-275">275</a></span>
+<span class="normal"><a href="#__codelineno-0-276">276</a></span>
+<span class="normal"><a href="#__codelineno-0-277">277</a></span>
+<span class="normal"><a href="#__codelineno-0-278">278</a></span>
+<span class="normal"><a href="#__codelineno-0-279">279</a></span>
+<span class="normal"><a href="#__codelineno-0-280">280</a></span>
+<span class="normal"><a href="#__codelineno-0-281">281</a></span>
+<span class="normal"><a href="#__codelineno-0-282">282</a></span>
+<span class="normal"><a href="#__codelineno-0-283">283</a></span>
+<span class="normal"><a href="#__codelineno-0-284">284</a></span>
+<span class="normal"><a href="#__codelineno-0-285">285</a></span>
+<span class="normal"><a href="#__codelineno-0-286">286</a></span>
+<span class="normal"><a href="#__codelineno-0-287">287</a></span>
+<span class="normal"><a href="#__codelineno-0-288">288</a></span>
+<span class="normal"><a href="#__codelineno-0-289">289</a></span>
+<span class="normal"><a href="#__codelineno-0-290">290</a></span>
+<span class="normal"><a href="#__codelineno-0-291">291</a></span>
+<span class="normal"><a href="#__codelineno-0-292">292</a></span>
+<span class="normal"><a href="#__codelineno-0-293">293</a></span>
+<span class="normal"><a href="#__codelineno-0-294">294</a></span>
+<span class="normal"><a href="#__codelineno-0-295">295</a></span>
+<span class="normal"><a href="#__codelineno-0-296">296</a></span>
+<span class="normal"><a href="#__codelineno-0-297">297</a></span>
+<span class="normal"><a href="#__codelineno-0-298">298</a></span>
+<span class="normal"><a href="#__codelineno-0-299">299</a></span>
+<span class="normal"><a href="#__codelineno-0-300">300</a></span>
+<span class="normal"><a href="#__codelineno-0-301">301</a></span>
+<span class="normal"><a href="#__codelineno-0-302">302</a></span>
+<span class="normal"><a href="#__codelineno-0-303">303</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-261" name="__codelineno-0-261"></a><span class="k">def</span> <span class="nf">classify_patch</span><span class="p">(</span><span class="n">hunk_classifications</span><span class="p">):</span>
+<a id="__codelineno-0-262" name="__codelineno-0-262"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="sd">    classify_patch</span>
+<a id="__codelineno-0-264" name="__codelineno-0-264"></a><span class="sd">    To classify a patch based on the hunks</span>
+<a id="__codelineno-0-265" name="__codelineno-0-265"></a>
+<a id="__codelineno-0-266" name="__codelineno-0-266"></a><span class="sd">    @hunk_classifications - the classifications for the different hunks in the .diff of a file changed in a PR</span>
+<a id="__codelineno-0-267" name="__codelineno-0-267"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-268" name="__codelineno-0-268"></a>
+<a id="__codelineno-0-269" name="__codelineno-0-269"></a>    <span class="n">NA_total</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-270" name="__codelineno-0-270"></a>    <span class="n">MO_total</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-271" name="__codelineno-0-271"></a>    <span class="n">ED_total</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-272" name="__codelineno-0-272"></a>    <span class="n">SP_total</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-273" name="__codelineno-0-273"></a>
+<a id="__codelineno-0-274" name="__codelineno-0-274"></a>    <span class="n">finalClass</span><span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<a id="__codelineno-0-275" name="__codelineno-0-275"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hunk_classifications</span><span class="p">)):</span>
+<a id="__codelineno-0-276" name="__codelineno-0-276"></a>        <span class="k">if</span> <span class="n">hunk_classifications</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span><span class="s1">&#39;ED&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-277" name="__codelineno-0-277"></a>            <span class="n">ED_total</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a>        <span class="k">elif</span> <span class="n">hunk_classifications</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span><span class="s1">&#39;MO&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-279" name="__codelineno-0-279"></a>            <span class="n">MO_total</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a>        <span class="k">elif</span> <span class="n">hunk_classifications</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span><span class="s1">&#39;NA&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a>            <span class="n">NA_total</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a>        <span class="k">elif</span> <span class="n">hunk_classifications</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span><span class="s1">&#39;SP&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a>            <span class="n">SP_total</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a>    <span class="k">if</span> <span class="n">MO_total</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ED_total</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">SP_total</span> <span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a>        <span class="n">max_total</span> <span class="o">=</span> <span class="n">NA_total</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a>        <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;NA&#39;</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a>        <span class="n">max_total</span> <span class="o">=</span> <span class="n">ED_total</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a>        <span class="n">finalClass</span><span class="o">=</span><span class="s1">&#39;ED&#39;</span>
+<a id="__codelineno-0-291" name="__codelineno-0-291"></a>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a>        <span class="k">if</span> <span class="n">max_total</span> <span class="o">&lt;</span> <span class="n">MO_total</span><span class="p">:</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a>            <span class="n">max_total</span> <span class="o">=</span> <span class="n">MO_total</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a>            <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;MO&#39;</span>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a>        <span class="k">elif</span> <span class="n">max_total</span> <span class="o">==</span> <span class="n">MO_total</span><span class="p">:</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a>            <span class="c1"># Possible SPLIT case if ED == MO</span>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a>            <span class="n">finalClass</span><span class="o">=</span><span class="s1">&#39;SP&#39;</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a>        <span class="k">if</span> <span class="n">max_total</span> <span class="o">&lt;=</span> <span class="n">SP_total</span><span class="p">:</span>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a>            <span class="n">max_total</span> <span class="o">=</span> <span class="n">SP_total</span>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a>            <span class="n">finalClass</span> <span class="o">=</span> <span class="s1">&#39;SP&#39;</span>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a>    <span class="k">return</span> <span class="n">finalClass</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.find_hunk_matches" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_hunk_matches</span><span class="p">(</span><span class="n">match_items</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">important_hashes</span><span class="p">,</span> <span class="n">source_hashes</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>find_hunk_matches
+To find the different matches between two hunk using the hashed values</p>
+<p>@match_items
+@_type
+@important_hashes
+@source_hashes</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-178">178</a></span>
+<span class="normal"><a href="#__codelineno-0-179">179</a></span>
+<span class="normal"><a href="#__codelineno-0-180">180</a></span>
+<span class="normal"><a href="#__codelineno-0-181">181</a></span>
+<span class="normal"><a href="#__codelineno-0-182">182</a></span>
+<span class="normal"><a href="#__codelineno-0-183">183</a></span>
+<span class="normal"><a href="#__codelineno-0-184">184</a></span>
+<span class="normal"><a href="#__codelineno-0-185">185</a></span>
+<span class="normal"><a href="#__codelineno-0-186">186</a></span>
+<span class="normal"><a href="#__codelineno-0-187">187</a></span>
+<span class="normal"><a href="#__codelineno-0-188">188</a></span>
+<span class="normal"><a href="#__codelineno-0-189">189</a></span>
+<span class="normal"><a href="#__codelineno-0-190">190</a></span>
+<span class="normal"><a href="#__codelineno-0-191">191</a></span>
+<span class="normal"><a href="#__codelineno-0-192">192</a></span>
+<span class="normal"><a href="#__codelineno-0-193">193</a></span>
+<span class="normal"><a href="#__codelineno-0-194">194</a></span>
+<span class="normal"><a href="#__codelineno-0-195">195</a></span>
+<span class="normal"><a href="#__codelineno-0-196">196</a></span>
+<span class="normal"><a href="#__codelineno-0-197">197</a></span>
+<span class="normal"><a href="#__codelineno-0-198">198</a></span>
+<span class="normal"><a href="#__codelineno-0-199">199</a></span>
+<span class="normal"><a href="#__codelineno-0-200">200</a></span>
+<span class="normal"><a href="#__codelineno-0-201">201</a></span>
+<span class="normal"><a href="#__codelineno-0-202">202</a></span>
+<span class="normal"><a href="#__codelineno-0-203">203</a></span>
+<span class="normal"><a href="#__codelineno-0-204">204</a></span>
+<span class="normal"><a href="#__codelineno-0-205">205</a></span>
+<span class="normal"><a href="#__codelineno-0-206">206</a></span>
+<span class="normal"><a href="#__codelineno-0-207">207</a></span>
+<span class="normal"><a href="#__codelineno-0-208">208</a></span>
+<span class="normal"><a href="#__codelineno-0-209">209</a></span>
+<span class="normal"><a href="#__codelineno-0-210">210</a></span>
+<span class="normal"><a href="#__codelineno-0-211">211</a></span>
+<span class="normal"><a href="#__codelineno-0-212">212</a></span>
+<span class="normal"><a href="#__codelineno-0-213">213</a></span>
+<span class="normal"><a href="#__codelineno-0-214">214</a></span>
+<span class="normal"><a href="#__codelineno-0-215">215</a></span>
+<span class="normal"><a href="#__codelineno-0-216">216</a></span>
+<span class="normal"><a href="#__codelineno-0-217">217</a></span>
+<span class="normal"><a href="#__codelineno-0-218">218</a></span>
+<span class="normal"><a href="#__codelineno-0-219">219</a></span>
+<span class="normal"><a href="#__codelineno-0-220">220</a></span>
+<span class="normal"><a href="#__codelineno-0-221">221</a></span>
+<span class="normal"><a href="#__codelineno-0-222">222</a></span>
+<span class="normal"><a href="#__codelineno-0-223">223</a></span>
+<span class="normal"><a href="#__codelineno-0-224">224</a></span>
+<span class="normal"><a href="#__codelineno-0-225">225</a></span>
+<span class="normal"><a href="#__codelineno-0-226">226</a></span>
+<span class="normal"><a href="#__codelineno-0-227">227</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-178" name="__codelineno-0-178"></a><span class="k">def</span> <span class="nf">find_hunk_matches</span><span class="p">(</span><span class="n">match_items</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">important_hashes</span><span class="p">,</span> <span class="n">source_hashes</span><span class="p">):</span>
+<a id="__codelineno-0-179" name="__codelineno-0-179"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-180" name="__codelineno-0-180"></a><span class="sd">    find_hunk_matches</span>
+<a id="__codelineno-0-181" name="__codelineno-0-181"></a><span class="sd">    To find the different matches between two hunk using the hashed values</span>
+<a id="__codelineno-0-182" name="__codelineno-0-182"></a>
+<a id="__codelineno-0-183" name="__codelineno-0-183"></a><span class="sd">    @match_items</span>
+<a id="__codelineno-0-184" name="__codelineno-0-184"></a><span class="sd">    @_type</span>
+<a id="__codelineno-0-185" name="__codelineno-0-185"></a><span class="sd">    @important_hashes</span>
+<a id="__codelineno-0-186" name="__codelineno-0-186"></a><span class="sd">    @source_hashes</span>
+<a id="__codelineno-0-187" name="__codelineno-0-187"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-188" name="__codelineno-0-188"></a>
+<a id="__codelineno-0-189" name="__codelineno-0-189"></a>    <span class="n">seq_matches</span> <span class="o">=</span> <span class="p">{}</span> 
+<a id="__codelineno-0-190" name="__codelineno-0-190"></a>
+<a id="__codelineno-0-191" name="__codelineno-0-191"></a>    <span class="k">for</span> <span class="n">patch_nr</span> <span class="ow">in</span> <span class="n">match_items</span><span class="p">:</span>
+<a id="__codelineno-0-192" name="__codelineno-0-192"></a>        <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-193" name="__codelineno-0-193"></a>        <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-194" name="__codelineno-0-194"></a>        <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<a id="__codelineno-0-195" name="__codelineno-0-195"></a>        <span class="k">for</span> <span class="n">patch_seq</span> <span class="ow">in</span> <span class="n">match_items</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">]:</span>
+<a id="__codelineno-0-196" name="__codelineno-0-196"></a>
+<a id="__codelineno-0-197" name="__codelineno-0-197"></a>            <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-198" name="__codelineno-0-198"></a>            <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-199" name="__codelineno-0-199"></a>            <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="s1">&#39;hash_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">match_items</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<a id="__codelineno-0-200" name="__codelineno-0-200"></a>
+<a id="__codelineno-0-201" name="__codelineno-0-201"></a>            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">match_items</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">]:</span>
+<a id="__codelineno-0-202" name="__codelineno-0-202"></a>                <span class="k">if</span> <span class="n">match_items</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="n">k</span><span class="p">]:</span>
+<a id="__codelineno-0-203" name="__codelineno-0-203"></a>                    <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-204" name="__codelineno-0-204"></a>
+<a id="__codelineno-0-205" name="__codelineno-0-205"></a>    <span class="n">match_bool</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-206" name="__codelineno-0-206"></a>
+<a id="__codelineno-0-207" name="__codelineno-0-207"></a>    <span class="k">for</span> <span class="n">seq_nr</span> <span class="ow">in</span> <span class="n">seq_matches</span><span class="p">:</span>
+<a id="__codelineno-0-208" name="__codelineno-0-208"></a>        <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">seq_matches</span><span class="p">[</span><span class="n">seq_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">]:</span>
+<a id="__codelineno-0-209" name="__codelineno-0-209"></a>            <span class="k">if</span> <span class="n">seq_matches</span><span class="p">[</span><span class="n">seq_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">seq</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-210" name="__codelineno-0-210"></a>                <span class="n">match_bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-0-211" name="__codelineno-0-211"></a>                <span class="k">break</span>
+<a id="__codelineno-0-212" name="__codelineno-0-212"></a>        <span class="n">_class</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<a id="__codelineno-0-213" name="__codelineno-0-213"></a>
+<a id="__codelineno-0-214" name="__codelineno-0-214"></a>        <span class="k">if</span> <span class="n">_type</span> <span class="o">==</span> <span class="s1">&#39;MO&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-215" name="__codelineno-0-215"></a>            <span class="k">if</span> <span class="n">match_bool</span><span class="p">:</span>
+<a id="__codelineno-0-216" name="__codelineno-0-216"></a>                <span class="n">_class</span> <span class="o">=</span> <span class="n">_type</span>
+<a id="__codelineno-0-217" name="__codelineno-0-217"></a>            <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-218" name="__codelineno-0-218"></a>                <span class="n">_class</span> <span class="o">=</span> <span class="s1">&#39;MC&#39;</span>
+<a id="__codelineno-0-219" name="__codelineno-0-219"></a>        <span class="k">elif</span> <span class="n">_type</span> <span class="o">==</span> <span class="s1">&#39;ED&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-220" name="__codelineno-0-220"></a>            <span class="k">if</span> <span class="n">match_bool</span><span class="p">:</span>
+<a id="__codelineno-0-221" name="__codelineno-0-221"></a>                <span class="n">_class</span> <span class="o">=</span> <span class="n">_type</span>
+<a id="__codelineno-0-222" name="__codelineno-0-222"></a>            <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-223" name="__codelineno-0-223"></a>                <span class="n">_class</span> <span class="o">=</span> <span class="s1">&#39;MC&#39;</span>
+<a id="__codelineno-0-224" name="__codelineno-0-224"></a>
+<a id="__codelineno-0-225" name="__codelineno-0-225"></a>        <span class="n">seq_matches</span><span class="p">[</span><span class="n">seq_nr</span><span class="p">][</span><span class="s1">&#39;class&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">_class</span>        
+<a id="__codelineno-0-226" name="__codelineno-0-226"></a>
+<a id="__codelineno-0-227" name="__codelineno-0-227"></a>    <span class="k">return</span> <span class="n">seq_matches</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.find_hunk_matches_w_important_hash" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_hunk_matches_w_important_hash</span><span class="p">(</span><span class="n">match_items</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">important_hashes</span><span class="p">,</span> <span class="n">source_hashes</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>find_hunk_matches_w_important_hash
+To find the different matches between two hunk using the hashed values and using the important hash feature</p>
+<p>@match_items
+@_type
+@important_hashes
+@source_hashes</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-306">306</a></span>
+<span class="normal"><a href="#__codelineno-0-307">307</a></span>
+<span class="normal"><a href="#__codelineno-0-308">308</a></span>
+<span class="normal"><a href="#__codelineno-0-309">309</a></span>
+<span class="normal"><a href="#__codelineno-0-310">310</a></span>
+<span class="normal"><a href="#__codelineno-0-311">311</a></span>
+<span class="normal"><a href="#__codelineno-0-312">312</a></span>
+<span class="normal"><a href="#__codelineno-0-313">313</a></span>
+<span class="normal"><a href="#__codelineno-0-314">314</a></span>
+<span class="normal"><a href="#__codelineno-0-315">315</a></span>
+<span class="normal"><a href="#__codelineno-0-316">316</a></span>
+<span class="normal"><a href="#__codelineno-0-317">317</a></span>
+<span class="normal"><a href="#__codelineno-0-318">318</a></span>
+<span class="normal"><a href="#__codelineno-0-319">319</a></span>
+<span class="normal"><a href="#__codelineno-0-320">320</a></span>
+<span class="normal"><a href="#__codelineno-0-321">321</a></span>
+<span class="normal"><a href="#__codelineno-0-322">322</a></span>
+<span class="normal"><a href="#__codelineno-0-323">323</a></span>
+<span class="normal"><a href="#__codelineno-0-324">324</a></span>
+<span class="normal"><a href="#__codelineno-0-325">325</a></span>
+<span class="normal"><a href="#__codelineno-0-326">326</a></span>
+<span class="normal"><a href="#__codelineno-0-327">327</a></span>
+<span class="normal"><a href="#__codelineno-0-328">328</a></span>
+<span class="normal"><a href="#__codelineno-0-329">329</a></span>
+<span class="normal"><a href="#__codelineno-0-330">330</a></span>
+<span class="normal"><a href="#__codelineno-0-331">331</a></span>
+<span class="normal"><a href="#__codelineno-0-332">332</a></span>
+<span class="normal"><a href="#__codelineno-0-333">333</a></span>
+<span class="normal"><a href="#__codelineno-0-334">334</a></span>
+<span class="normal"><a href="#__codelineno-0-335">335</a></span>
+<span class="normal"><a href="#__codelineno-0-336">336</a></span>
+<span class="normal"><a href="#__codelineno-0-337">337</a></span>
+<span class="normal"><a href="#__codelineno-0-338">338</a></span>
+<span class="normal"><a href="#__codelineno-0-339">339</a></span>
+<span class="normal"><a href="#__codelineno-0-340">340</a></span>
+<span class="normal"><a href="#__codelineno-0-341">341</a></span>
+<span class="normal"><a href="#__codelineno-0-342">342</a></span>
+<span class="normal"><a href="#__codelineno-0-343">343</a></span>
+<span class="normal"><a href="#__codelineno-0-344">344</a></span>
+<span class="normal"><a href="#__codelineno-0-345">345</a></span>
+<span class="normal"><a href="#__codelineno-0-346">346</a></span>
+<span class="normal"><a href="#__codelineno-0-347">347</a></span>
+<span class="normal"><a href="#__codelineno-0-348">348</a></span>
+<span class="normal"><a href="#__codelineno-0-349">349</a></span>
+<span class="normal"><a href="#__codelineno-0-350">350</a></span>
+<span class="normal"><a href="#__codelineno-0-351">351</a></span>
+<span class="normal"><a href="#__codelineno-0-352">352</a></span>
+<span class="normal"><a href="#__codelineno-0-353">353</a></span>
+<span class="normal"><a href="#__codelineno-0-354">354</a></span>
+<span class="normal"><a href="#__codelineno-0-355">355</a></span>
+<span class="normal"><a href="#__codelineno-0-356">356</a></span>
+<span class="normal"><a href="#__codelineno-0-357">357</a></span>
+<span class="normal"><a href="#__codelineno-0-358">358</a></span>
+<span class="normal"><a href="#__codelineno-0-359">359</a></span>
+<span class="normal"><a href="#__codelineno-0-360">360</a></span>
+<span class="normal"><a href="#__codelineno-0-361">361</a></span>
+<span class="normal"><a href="#__codelineno-0-362">362</a></span>
+<span class="normal"><a href="#__codelineno-0-363">363</a></span>
+<span class="normal"><a href="#__codelineno-0-364">364</a></span>
+<span class="normal"><a href="#__codelineno-0-365">365</a></span>
+<span class="normal"><a href="#__codelineno-0-366">366</a></span>
+<span class="normal"><a href="#__codelineno-0-367">367</a></span>
+<span class="normal"><a href="#__codelineno-0-368">368</a></span>
+<span class="normal"><a href="#__codelineno-0-369">369</a></span>
+<span class="normal"><a href="#__codelineno-0-370">370</a></span>
+<span class="normal"><a href="#__codelineno-0-371">371</a></span>
+<span class="normal"><a href="#__codelineno-0-372">372</a></span>
+<span class="normal"><a href="#__codelineno-0-373">373</a></span>
+<span class="normal"><a href="#__codelineno-0-374">374</a></span>
+<span class="normal"><a href="#__codelineno-0-375">375</a></span>
+<span class="normal"><a href="#__codelineno-0-376">376</a></span>
+<span class="normal"><a href="#__codelineno-0-377">377</a></span>
+<span class="normal"><a href="#__codelineno-0-378">378</a></span>
+<span class="normal"><a href="#__codelineno-0-379">379</a></span>
+<span class="normal"><a href="#__codelineno-0-380">380</a></span>
+<span class="normal"><a href="#__codelineno-0-381">381</a></span>
+<span class="normal"><a href="#__codelineno-0-382">382</a></span>
+<span class="normal"><a href="#__codelineno-0-383">383</a></span>
+<span class="normal"><a href="#__codelineno-0-384">384</a></span>
+<span class="normal"><a href="#__codelineno-0-385">385</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-306" name="__codelineno-0-306"></a><span class="k">def</span> <span class="nf">find_hunk_matches_w_important_hash</span><span class="p">(</span><span class="n">match_items</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">important_hashes</span><span class="p">,</span> <span class="n">source_hashes</span><span class="p">):</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a><span class="sd">    find_hunk_matches_w_important_hash</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a><span class="sd">    To find the different matches between two hunk using the hashed values and using the important hash feature</span>
+<a id="__codelineno-0-310" name="__codelineno-0-310"></a>
+<a id="__codelineno-0-311" name="__codelineno-0-311"></a><span class="sd">    @match_items</span>
+<a id="__codelineno-0-312" name="__codelineno-0-312"></a><span class="sd">    @_type</span>
+<a id="__codelineno-0-313" name="__codelineno-0-313"></a><span class="sd">    @important_hashes</span>
+<a id="__codelineno-0-314" name="__codelineno-0-314"></a><span class="sd">    @source_hashes</span>
+<a id="__codelineno-0-315" name="__codelineno-0-315"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-316" name="__codelineno-0-316"></a>
+<a id="__codelineno-0-317" name="__codelineno-0-317"></a>    <span class="n">seq_matches</span> <span class="o">=</span> <span class="p">{}</span> 
+<a id="__codelineno-0-318" name="__codelineno-0-318"></a>    <span class="n">test</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-0-319" name="__codelineno-0-319"></a>    <span class="k">for</span> <span class="n">lines</span> <span class="ow">in</span> <span class="n">important_hashes</span><span class="p">:</span>
+<a id="__codelineno-0-320" name="__codelineno-0-320"></a>        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+<a id="__codelineno-0-321" name="__codelineno-0-321"></a>            <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+<a id="__codelineno-0-322" name="__codelineno-0-322"></a>                <span class="k">for</span> <span class="n">ngram</span><span class="p">,</span> <span class="n">hash_list</span> <span class="ow">in</span> <span class="n">source_hashes</span><span class="p">:</span>
+<a id="__codelineno-0-323" name="__codelineno-0-323"></a>                    <span class="k">if</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">ngram</span><span class="p">:</span>
+<a id="__codelineno-0-324" name="__codelineno-0-324"></a>                        <span class="n">test</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hash_list</span><span class="p">)</span>
+<a id="__codelineno-0-325" name="__codelineno-0-325"></a>
+<a id="__codelineno-0-326" name="__codelineno-0-326"></a>    <span class="n">found_important_hashes</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-327" name="__codelineno-0-327"></a>    <span class="n">important_hash_match</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-328" name="__codelineno-0-328"></a>    <span class="n">total_important_hashes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">important_hashes</span><span class="p">)</span>
+<a id="__codelineno-0-329" name="__codelineno-0-329"></a>    <span class="k">for</span> <span class="n">patch_nr</span> <span class="ow">in</span> <span class="n">match_items</span><span class="p">:</span>
+<a id="__codelineno-0-330" name="__codelineno-0-330"></a>        <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-331" name="__codelineno-0-331"></a>        <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-332" name="__codelineno-0-332"></a>        <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<a id="__codelineno-0-333" name="__codelineno-0-333"></a>        <span class="k">for</span> <span class="n">patch_seq</span> <span class="ow">in</span> <span class="n">match_items</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">]:</span>
+<a id="__codelineno-0-334" name="__codelineno-0-334"></a>            <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-335" name="__codelineno-0-335"></a>            <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-336" name="__codelineno-0-336"></a>            <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="s1">&#39;hash_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">match_items</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<a id="__codelineno-0-337" name="__codelineno-0-337"></a>
+<a id="__codelineno-0-338" name="__codelineno-0-338"></a>            <span class="k">if</span> <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="s1">&#39;hash_list&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">test</span><span class="p">:</span>
+<a id="__codelineno-0-339" name="__codelineno-0-339"></a>                <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="s1">&#39;important&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-340" name="__codelineno-0-340"></a>                <span class="n">important_hash_match</span> <span class="o">=+</span> <span class="mi">1</span>
+<a id="__codelineno-0-341" name="__codelineno-0-341"></a>            <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-342" name="__codelineno-0-342"></a>                <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="s1">&#39;important&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-0-343" name="__codelineno-0-343"></a>
+<a id="__codelineno-0-344" name="__codelineno-0-344"></a>            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">match_items</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">]:</span>
+<a id="__codelineno-0-345" name="__codelineno-0-345"></a>                <span class="k">if</span> <span class="n">match_items</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="n">k</span><span class="p">]:</span>
+<a id="__codelineno-0-346" name="__codelineno-0-346"></a>                    <span class="n">seq_matches</span><span class="p">[</span><span class="n">patch_nr</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">patch_seq</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-347" name="__codelineno-0-347"></a>
+<a id="__codelineno-0-348" name="__codelineno-0-348"></a>    <span class="k">if</span> <span class="n">total_important_hashes</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>       
+<a id="__codelineno-0-349" name="__codelineno-0-349"></a>        <span class="n">important_hash_perc</span> <span class="o">=</span> <span class="p">(</span><span class="n">important_hash_match</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="n">total_important_hashes</span>            
+<a id="__codelineno-0-350" name="__codelineno-0-350"></a>
+<a id="__codelineno-0-351" name="__codelineno-0-351"></a>    <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+<a id="__codelineno-0-352" name="__codelineno-0-352"></a>        <span class="n">match_bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-0-353" name="__codelineno-0-353"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-354" name="__codelineno-0-354"></a>        <span class="n">match_bool</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-355" name="__codelineno-0-355"></a>
+<a id="__codelineno-0-356" name="__codelineno-0-356"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">seq_matches</span><span class="p">:</span>
+<a id="__codelineno-0-357" name="__codelineno-0-357"></a>        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">seq_matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">]:</span>
+<a id="__codelineno-0-358" name="__codelineno-0-358"></a>            <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+<a id="__codelineno-0-359" name="__codelineno-0-359"></a>                <span class="k">if</span> <span class="n">seq_matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;important&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">seq_matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-360" name="__codelineno-0-360"></a>                    <span class="n">match_bool</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-361" name="__codelineno-0-361"></a>                <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-362" name="__codelineno-0-362"></a>                    <span class="k">if</span> <span class="n">seq_matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-363" name="__codelineno-0-363"></a>                        <span class="n">match_bool</span> <span class="o">=</span> <span class="kc">False</span>      
+<a id="__codelineno-0-364" name="__codelineno-0-364"></a>            <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-365" name="__codelineno-0-365"></a>                <span class="k">if</span> <span class="n">seq_matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;sequences&#39;</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-366" name="__codelineno-0-366"></a>                    <span class="n">match_bool</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-0-367" name="__codelineno-0-367"></a>                    <span class="k">break</span>
+<a id="__codelineno-0-368" name="__codelineno-0-368"></a>
+<a id="__codelineno-0-369" name="__codelineno-0-369"></a>        <span class="n">_class</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<a id="__codelineno-0-370" name="__codelineno-0-370"></a>
+<a id="__codelineno-0-371" name="__codelineno-0-371"></a>        <span class="k">if</span> <span class="n">_type</span> <span class="o">==</span> <span class="s1">&#39;MO&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-372" name="__codelineno-0-372"></a>            <span class="k">if</span> <span class="n">match_bool</span><span class="p">:</span>
+<a id="__codelineno-0-373" name="__codelineno-0-373"></a>                <span class="n">_class</span> <span class="o">=</span> <span class="n">_type</span>
+<a id="__codelineno-0-374" name="__codelineno-0-374"></a>            <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-375" name="__codelineno-0-375"></a>                <span class="n">_class</span> <span class="o">=</span> <span class="s1">&#39;MC&#39;</span>
+<a id="__codelineno-0-376" name="__codelineno-0-376"></a>
+<a id="__codelineno-0-377" name="__codelineno-0-377"></a>        <span class="k">elif</span> <span class="n">_type</span> <span class="o">==</span> <span class="s1">&#39;ED&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-378" name="__codelineno-0-378"></a>            <span class="k">if</span> <span class="n">match_bool</span><span class="p">:</span>
+<a id="__codelineno-0-379" name="__codelineno-0-379"></a>                <span class="n">_class</span> <span class="o">=</span> <span class="n">_type</span>
+<a id="__codelineno-0-380" name="__codelineno-0-380"></a>            <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-381" name="__codelineno-0-381"></a>                <span class="n">_class</span> <span class="o">=</span> <span class="s1">&#39;MC&#39;</span>
+<a id="__codelineno-0-382" name="__codelineno-0-382"></a>
+<a id="__codelineno-0-383" name="__codelineno-0-383"></a>        <span class="n">seq_matches</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;class&#39;</span><span class="p">]</span><span class="o">=</span> <span class="n">_class</span> 
+<a id="__codelineno-0-384" name="__codelineno-0-384"></a>
+<a id="__codelineno-0-385" name="__codelineno-0-385"></a>    <span class="k">return</span> <span class="n">seq_matches</span> 
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.getFileBeforePatch" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">getFileBeforePatch</span><span class="p">(</span><span class="n">repo_dir</span><span class="p">,</span> <span class="n">mainline</span><span class="p">,</span> <span class="n">sha</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">pair_nr</span><span class="p">,</span> <span class="n">pr_nr</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">fileDir</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>getFileBeforePatch
+Extracts the buggy file using the GitHub API</p>
+<p>@repo_dir - directory where to store the file
+@mainline - the source repository
+@sha - the commit sha-value that last changed the file
+@parent - the parent commit sha-value of the commit that last changed the file
+@pr_nr - the pull request number of the patch
+@file - the file path in the repository
+@fileDir - the sub directory where to store the file
+@fileName - a name to store the file
+@token - token needed for the GitHub API</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-119">119</a></span>
+<span class="normal"><a href="#__codelineno-0-120">120</a></span>
+<span class="normal"><a href="#__codelineno-0-121">121</a></span>
+<span class="normal"><a href="#__codelineno-0-122">122</a></span>
+<span class="normal"><a href="#__codelineno-0-123">123</a></span>
+<span class="normal"><a href="#__codelineno-0-124">124</a></span>
+<span class="normal"><a href="#__codelineno-0-125">125</a></span>
+<span class="normal"><a href="#__codelineno-0-126">126</a></span>
+<span class="normal"><a href="#__codelineno-0-127">127</a></span>
+<span class="normal"><a href="#__codelineno-0-128">128</a></span>
+<span class="normal"><a href="#__codelineno-0-129">129</a></span>
+<span class="normal"><a href="#__codelineno-0-130">130</a></span>
+<span class="normal"><a href="#__codelineno-0-131">131</a></span>
+<span class="normal"><a href="#__codelineno-0-132">132</a></span>
+<span class="normal"><a href="#__codelineno-0-133">133</a></span>
+<span class="normal"><a href="#__codelineno-0-134">134</a></span>
+<span class="normal"><a href="#__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#__codelineno-0-138">138</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-119" name="__codelineno-0-119"></a><span class="k">def</span> <span class="nf">getFileBeforePatch</span><span class="p">(</span><span class="n">repo_dir</span><span class="p">,</span> <span class="n">mainline</span><span class="p">,</span> <span class="n">sha</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">pair_nr</span><span class="p">,</span> <span class="n">pr_nr</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">fileDir</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+<a id="__codelineno-0-120" name="__codelineno-0-120"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-121" name="__codelineno-0-121"></a><span class="sd">    getFileBeforePatch</span>
+<a id="__codelineno-0-122" name="__codelineno-0-122"></a><span class="sd">    Extracts the buggy file using the GitHub API</span>
+<a id="__codelineno-0-123" name="__codelineno-0-123"></a>
+<a id="__codelineno-0-124" name="__codelineno-0-124"></a><span class="sd">    @repo_dir - directory where to store the file</span>
+<a id="__codelineno-0-125" name="__codelineno-0-125"></a><span class="sd">    @mainline - the source repository</span>
+<a id="__codelineno-0-126" name="__codelineno-0-126"></a><span class="sd">    @sha - the commit sha-value that last changed the file</span>
+<a id="__codelineno-0-127" name="__codelineno-0-127"></a><span class="sd">    @parent - the parent commit sha-value of the commit that last changed the file</span>
+<a id="__codelineno-0-128" name="__codelineno-0-128"></a><span class="sd">    @pr_nr - the pull request number of the patch</span>
+<a id="__codelineno-0-129" name="__codelineno-0-129"></a><span class="sd">    @file - the file path in the repository</span>
+<a id="__codelineno-0-130" name="__codelineno-0-130"></a><span class="sd">    @fileDir - the sub directory where to store the file</span>
+<a id="__codelineno-0-131" name="__codelineno-0-131"></a><span class="sd">    @fileName - a name to store the file</span>
+<a id="__codelineno-0-132" name="__codelineno-0-132"></a><span class="sd">    @token - token needed for the GitHub API</span>
+<a id="__codelineno-0-133" name="__codelineno-0-133"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-134" name="__codelineno-0-134"></a>    <span class="n">fileBeforePatchDir</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">repo_dir</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">pair_nr</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">mainline</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">pr_nr</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">sha</span><span class="si">}</span><span class="s1">/before_patch/</span><span class="si">{</span><span class="n">fileDir</span><span class="si">}</span><span class="s1">&#39;</span>
+<a id="__codelineno-0-135" name="__codelineno-0-135"></a>    <span class="n">beforePatch_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">constant</span><span class="o">.</span><span class="n">GITHUB_RAW_URL</span><span class="si">}{</span><span class="n">mainline</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">parent</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&#39;</span>
+<a id="__codelineno-0-136" name="__codelineno-0-136"></a>    <span class="n">fileBeforePatch</span> <span class="o">=</span> <span class="n">apiRequest</span><span class="p">(</span><span class="n">beforePatch_url</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+<a id="__codelineno-0-137" name="__codelineno-0-137"></a>    <span class="n">beforePatch</span> <span class="o">=</span> <span class="n">commitloader</span><span class="o">.</span><span class="n">saveFile</span><span class="p">(</span><span class="n">fileBeforePatch</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="n">fileBeforePatchDir</span><span class="p">,</span> <span class="n">fileName</span><span class="p">)</span>
+<a id="__codelineno-0-138" name="__codelineno-0-138"></a>    <span class="k">return</span> <span class="n">fileBeforePatchDir</span> <span class="o">+</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">beforePatch_url</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.getFirstLastCommit" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">getFirstLastCommit</span><span class="p">(</span><span class="n">pr_commits</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>getFirstLastCommit
+Retrieve the first and the last commit of a pull request</p>
+<p>@pr_commits</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-387">387</a></span>
+<span class="normal"><a href="#__codelineno-0-388">388</a></span>
+<span class="normal"><a href="#__codelineno-0-389">389</a></span>
+<span class="normal"><a href="#__codelineno-0-390">390</a></span>
+<span class="normal"><a href="#__codelineno-0-391">391</a></span>
+<span class="normal"><a href="#__codelineno-0-392">392</a></span>
+<span class="normal"><a href="#__codelineno-0-393">393</a></span>
+<span class="normal"><a href="#__codelineno-0-394">394</a></span>
+<span class="normal"><a href="#__codelineno-0-395">395</a></span>
+<span class="normal"><a href="#__codelineno-0-396">396</a></span>
+<span class="normal"><a href="#__codelineno-0-397">397</a></span>
+<span class="normal"><a href="#__codelineno-0-398">398</a></span>
+<span class="normal"><a href="#__codelineno-0-399">399</a></span>
+<span class="normal"><a href="#__codelineno-0-400">400</a></span>
+<span class="normal"><a href="#__codelineno-0-401">401</a></span>
+<span class="normal"><a href="#__codelineno-0-402">402</a></span>
+<span class="normal"><a href="#__codelineno-0-403">403</a></span>
+<span class="normal"><a href="#__codelineno-0-404">404</a></span>
+<span class="normal"><a href="#__codelineno-0-405">405</a></span>
+<span class="normal"><a href="#__codelineno-0-406">406</a></span>
+<span class="normal"><a href="#__codelineno-0-407">407</a></span>
+<span class="normal"><a href="#__codelineno-0-408">408</a></span>
+<span class="normal"><a href="#__codelineno-0-409">409</a></span>
+<span class="normal"><a href="#__codelineno-0-410">410</a></span>
+<span class="normal"><a href="#__codelineno-0-411">411</a></span>
+<span class="normal"><a href="#__codelineno-0-412">412</a></span>
+<span class="normal"><a href="#__codelineno-0-413">413</a></span>
+<span class="normal"><a href="#__codelineno-0-414">414</a></span>
+<span class="normal"><a href="#__codelineno-0-415">415</a></span>
+<span class="normal"><a href="#__codelineno-0-416">416</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-387" name="__codelineno-0-387"></a><span class="k">def</span> <span class="nf">getFirstLastCommit</span><span class="p">(</span><span class="n">pr_commits</span><span class="p">):</span>
+<a id="__codelineno-0-388" name="__codelineno-0-388"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-389" name="__codelineno-0-389"></a><span class="sd">    getFirstLastCommit</span>
+<a id="__codelineno-0-390" name="__codelineno-0-390"></a><span class="sd">    Retrieve the first and the last commit of a pull request</span>
+<a id="__codelineno-0-391" name="__codelineno-0-391"></a>
+<a id="__codelineno-0-392" name="__codelineno-0-392"></a><span class="sd">    @pr_commits</span>
+<a id="__codelineno-0-393" name="__codelineno-0-393"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-394" name="__codelineno-0-394"></a>    <span class="n">first_commit</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-395" name="__codelineno-0-395"></a>    <span class="n">last_commit</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-0-396" name="__codelineno-0-396"></a>    <span class="k">for</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">pr_commits</span><span class="p">:</span>
+<a id="__codelineno-0-397" name="__codelineno-0-397"></a>        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+<a id="__codelineno-0-398" name="__codelineno-0-398"></a>            <span class="n">first_commit_date</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<a id="__codelineno-0-399" name="__codelineno-0-399"></a>            <span class="n">last_commit_date</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<a id="__codelineno-0-400" name="__codelineno-0-400"></a>            <span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="n">p</span><span class="p">]:</span>
+<a id="__codelineno-0-401" name="__codelineno-0-401"></a>                <span class="n">commit_date</span> <span class="o">=</span><span class="n">commit</span><span class="p">[</span><span class="s1">&#39;commit_date&#39;</span><span class="p">]</span>
+<a id="__codelineno-0-402" name="__codelineno-0-402"></a>                <span class="k">if</span> <span class="n">first_commit_date</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-403" name="__codelineno-0-403"></a>                    <span class="n">first_commit_date</span> <span class="o">=</span> <span class="n">commit_date</span>
+<a id="__codelineno-0-404" name="__codelineno-0-404"></a>                    <span class="n">first_commit</span> <span class="o">=</span> <span class="n">commit</span>
+<a id="__codelineno-0-405" name="__codelineno-0-405"></a>                <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-406" name="__codelineno-0-406"></a>                    <span class="k">if</span> <span class="n">commit_date</span> <span class="o">&lt;</span> <span class="n">first_commit_date</span><span class="p">:</span>
+<a id="__codelineno-0-407" name="__codelineno-0-407"></a>                        <span class="n">first_commit_date</span> <span class="o">=</span> <span class="n">commit_date</span>
+<a id="__codelineno-0-408" name="__codelineno-0-408"></a>                        <span class="n">first_commit</span> <span class="o">=</span> <span class="n">commit</span>   
+<a id="__codelineno-0-409" name="__codelineno-0-409"></a>                    <span class="k">if</span> <span class="n">last_commit_date</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+<a id="__codelineno-0-410" name="__codelineno-0-410"></a>                        <span class="n">last_commit_date</span> <span class="o">=</span> <span class="n">commit_date</span>
+<a id="__codelineno-0-411" name="__codelineno-0-411"></a>                        <span class="n">last_commit</span> <span class="o">=</span> <span class="n">commit</span>
+<a id="__codelineno-0-412" name="__codelineno-0-412"></a>                    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-413" name="__codelineno-0-413"></a>                        <span class="k">if</span> <span class="n">commit_date</span> <span class="o">&gt;</span> <span class="n">last_commit_date</span><span class="p">:</span>
+<a id="__codelineno-0-414" name="__codelineno-0-414"></a>                            <span class="n">last_commit_date</span> <span class="o">=</span> <span class="n">commit_date</span>
+<a id="__codelineno-0-415" name="__codelineno-0-415"></a>                            <span class="n">last_commit</span> <span class="o">=</span> <span class="n">commit</span>
+<a id="__codelineno-0-416" name="__codelineno-0-416"></a>    <span class="k">return</span> <span class="n">first_commit</span><span class="p">,</span> <span class="n">last_commit</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.get_ext" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_ext</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>get_ext
+Extract the extension of the a file</p>
+<p>@file - the file from which to extract the file</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#__codelineno-0-114">114</a></span>
+<span class="normal"><a href="#__codelineno-0-115">115</a></span>
+<span class="normal"><a href="#__codelineno-0-116">116</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-109" name="__codelineno-0-109"></a><span class="k">def</span> <span class="nf">get_ext</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="sd">    get_ext</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a><span class="sd">    Extract the extension of the a file</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a><span class="sd">    @file - the file from which to extract the file</span>
+<a id="__codelineno-0-115" name="__codelineno-0-115"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-116" name="__codelineno-0-116"></a>    <span class="n">ext</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.processPatch" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">processPatch</span><span class="p">(</span><span class="n">patchPath</span><span class="p">,</span> <span class="n">dstPath</span><span class="p">,</span> <span class="n">typePatch</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>processPatch
+To process a patch
+This is done before bein able to classify the patch</p>
+<p>@patchPath - the path where the patch file is stored
+@dstPath - the path where the destination file is stored
+@typePatch - the kind of patch we are dealing with, buggy or fixed</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-76">76</a></span>
+<span class="normal"><a href="#__codelineno-0-77">77</a></span>
+<span class="normal"><a href="#__codelineno-0-78">78</a></span>
+<span class="normal"><a href="#__codelineno-0-79">79</a></span>
+<span class="normal"><a href="#__codelineno-0-80">80</a></span>
+<span class="normal"><a href="#__codelineno-0-81">81</a></span>
+<span class="normal"><a href="#__codelineno-0-82">82</a></span>
+<span class="normal"><a href="#__codelineno-0-83">83</a></span>
+<span class="normal"><a href="#__codelineno-0-84">84</a></span>
+<span class="normal"><a href="#__codelineno-0-85">85</a></span>
+<span class="normal"><a href="#__codelineno-0-86">86</a></span>
+<span class="normal"><a href="#__codelineno-0-87">87</a></span>
+<span class="normal"><a href="#__codelineno-0-88">88</a></span>
+<span class="normal"><a href="#__codelineno-0-89">89</a></span>
+<span class="normal"><a href="#__codelineno-0-90">90</a></span>
+<span class="normal"><a href="#__codelineno-0-91">91</a></span>
+<span class="normal"><a href="#__codelineno-0-92">92</a></span>
+<span class="normal"><a href="#__codelineno-0-93">93</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="k">def</span> <span class="nf">processPatch</span><span class="p">(</span><span class="n">patchPath</span><span class="p">,</span> <span class="n">dstPath</span><span class="p">,</span> <span class="n">typePatch</span><span class="p">):</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="sd">    processPatch</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">    To process a patch</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">    This is done before bein able to classify the patch</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">    @patchPath - the path where the patch file is stored</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">    @dstPath - the path where the destination file is stored</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a><span class="sd">    @typePatch - the kind of patch we are dealing with, buggy or fixed</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>    <span class="n">patch</span> <span class="o">=</span> <span class="n">patchloader</span><span class="o">.</span><span class="n">PatchLoader</span><span class="p">()</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>    <span class="n">npatch</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">traverse</span><span class="p">(</span><span class="n">patchPath</span><span class="p">,</span> <span class="n">typePatch</span><span class="p">)</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>    <span class="n">source</span> <span class="o">=</span> <span class="n">sourceloader</span><span class="o">.</span><span class="n">SourceLoader</span><span class="p">()</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>    <span class="n">nmatch</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">traverse</span><span class="p">(</span><span class="n">dstPath</span><span class="p">,</span> <span class="n">patch</span><span class="p">)</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="k">return</span> <span class="n">patch</span><span class="p">,</span> <span class="n">source</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.save_patch" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">save_patch</span><span class="p">(</span><span class="n">storageDir</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">dup_count</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>save_patch
+To save a patch file</p>
+<p>@storageDir - The directory where to save the patch
+@fileName - The name of the file
+@file - The content of the file</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span>
+<span class="normal"><a href="#__codelineno-0-67">67</a></span>
+<span class="normal"><a href="#__codelineno-0-68">68</a></span>
+<span class="normal"><a href="#__codelineno-0-69">69</a></span>
+<span class="normal"><a href="#__codelineno-0-70">70</a></span>
+<span class="normal"><a href="#__codelineno-0-71">71</a></span>
+<span class="normal"><a href="#__codelineno-0-72">72</a></span>
+<span class="normal"><a href="#__codelineno-0-73">73</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="k">def</span> <span class="nf">save_patch</span><span class="p">(</span><span class="n">storageDir</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">dup_count</span><span class="p">):</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    save_patch</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    To save a patch file</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    @storageDir - The directory where to save the patch</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    @fileName - The name of the file</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">    @file - The content of the file</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="n">patch_path</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">storageDir</span><span class="p">):</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">storageDir</span><span class="p">)</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="n">patch_path</span> <span class="o">=</span> <span class="n">storageDir</span> <span class="o">+</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s1">&#39;.patch&#39;</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">patch_path</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">storageDir</span> <span class="o">+</span> <span class="n">fileName</span><span class="p">):</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>            <span class="n">patch_path</span> <span class="o">=</span> <span class="n">storageDir</span> <span class="o">+</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s1">&#39;.patch&#39;</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">patch_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>            <span class="n">patch_path</span> <span class="o">=</span> <span class="n">storageDir</span> <span class="o">+</span> <span class="n">fileName</span><span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">dup_count</span> <span class="o">+</span> <span class="s1">&#39;.patch&#39;</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">patch_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>            <span class="n">dup_count</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="k">return</span> <span class="n">patch_path</span><span class="p">,</span> <span class="n">dup_count</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.core.classifier.unified_diff" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">unified_diff</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>unified_diff
+To create a unified diff file</p>
+<p>@before - The state of the file before changes
+@after - The state of the file after the changes</p>
+
+          <details class="quote">
+            <summary>Source code in <code>src/core/classifier.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span>
+<span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="k">def</span> <span class="nf">unified_diff</span><span class="p">(</span><span class="n">before</span><span class="p">,</span> <span class="n">after</span><span class="p">):</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    unified_diff</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">    To create a unified diff file</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    @before - The state of the file before changes</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">    @after - The state of the file after the changes</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="n">file1</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">before</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="n">file2</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">after</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">delta</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">unified_diff</span><span class="p">(</span><span class="n">file1</span><span class="p">,</span> <span class="n">file2</span><span class="p">)</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="n">file</span> <span class="o">=</span><span class="nb">list</span><span class="p">()</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">delta</span><span class="p">:</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="c1">#         if not line.startswith(&#39;---&#39;) or not line.startswith(&#39;+++&#39;):</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="n">file</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="k">return</span> <span class="n">file</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2023 <a href="https://github.com/unlv-evol"  target="_blank" rel="noopener">UNLV Software Evolution Lab</a>
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/unlv-evol/unlv-evol" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/unlv-evol" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/unlv-evol" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+    
+  </body>
+</html>
