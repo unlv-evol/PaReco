@@ -1,6 +1,6 @@
 # Patch Extraction
 
-::: src.core.patchExtraction
+::: src.core.patchExtractor
     handler: python
     options:
       show_root_heading: false
