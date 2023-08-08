@@ -26,7 +26,8 @@ ContextInfo = namedtuple('ContextInfo',\
         ['source_id', 'prev_context_line', 'start_line', 'end_line', 'next_context_line'])
 
 class FileExt:
-    '''Set some index to file types supported by the tool
+    '''
+    Set some index to file types supported by the tool
     '''
     NonText     = 0
     Text        = 1
@@ -55,6 +56,14 @@ whitespaces_regex = re.compile(r'[\t\x0b\x0c\r ]+')
 
 
 def file_type(file_path):
+    '''
+    Guess a file type based upon a file extension (mimetypes module)
+    
+    Args:
+        file_path (String): the file path
+    Return:
+        magic_ext
+    '''
     try:
         return magic_cookie.from_file(file_path)
     except AttributeError:
@@ -68,10 +77,11 @@ def verbose_print(text):
 def fnv1a_hash(string):
     '''
     FNV-1a 32bit hash (http://isthe.com/chongo/tech/comp/fnv/)
+    
     Args:
-        string: the string to be hashed
+        string (String): the string to be hashed
     Return:
-        hash value
+        hash (String): hash value
     '''
     hash = 2166136261
     for c in string:
@@ -83,10 +93,11 @@ def fnv1a_hash(string):
 def djb2_hash(string):
     '''
     djb2 hash (http://www.cse.yorku.ca/~oz/hash.html)
+
     Args:
-        string: the string to be hashed
+        string (String): the string to be hashed
     Return:
-        hash value
+        hash (String): hash value
     '''
     hash = 5381
     for c in string:
@@ -99,9 +110,9 @@ def sdbm_hash(string):
     sdbm hash (http://www.cse.yorku.ca/~oz/hash.html)
     
     Args:
-        string: the string to be hashed
+        string (String): the string to be hashed
     Return:
-        hash value
+        hash (String): hash value
     '''
     hash = 0
     for c in string:
