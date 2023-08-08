@@ -93,6 +93,20 @@ def divergence_date(mainline, variant, token_list, ct, least_date='', diverge_da
 
 
 def pr_patches(repo, diverge_date, least_date, token_list, ct):
+    '''
+    Get details of pull requests which part of patches 
+
+    Args:
+        repo (String): repository containing pull requests
+        diverge_date (datetime): date the variant diverged from the mainline
+        least_date (datetime): date of last commit
+        token_list (String): list of GitHub API tokens
+        ct (int): token counter
+    Returns:
+        pr (list): list of pull request
+        pr_all_merged (list): list of all pull requests
+        title (list): list of pull request titles 
+    '''
     pr = []
     pr_all_merged = []
     title = []
