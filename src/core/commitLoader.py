@@ -143,8 +143,9 @@ def getPatch(file, storageDir, fileName):
     Send a request to the github api to find retrieve the patch of a commit and saves it to a .patch file
     
     Args:
-        url: the url for the request that will be send to GitHub
-        token: the authentication tolen that will be used in the request
+        file (String): the patch file
+        storageDir (String): the storage directory
+        fileName (String): the file name of the patch to be saved
     """
     if not os.path.exists(storageDir):
         os.makedirs(storageDir)
