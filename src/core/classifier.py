@@ -17,14 +17,16 @@ import patchLoader as patchloader
 import sourceLoader as sourceloader
 import commitLoader as commitloader
 
-"""
+
+def unified_diff(before, after):
+    """
     unified_diff
     To create a unified diff file
     
     @before - The state of the file before changes
     @after - The state of the file after the changes
-"""
-def unified_diff(before, after):
+    """
+
     file1 = open(before).readlines()
     file2 = open(after).readlines()
     delta = difflib.unified_diff(file1, file2)
@@ -35,15 +37,16 @@ def unified_diff(before, after):
         file.append(line)
     return file
 
-"""
+
+def save_patch(storageDir, fileName, file, dup_count):
+    """
     save_patch
     To save a patch file
     
     @storageDir - The directory where to save the patch
     @fileName - The name of the file
     @file - The content of the file
-"""
-def save_patch(storageDir, fileName, file, dup_count):
+    """
     patch_path = ''
     if not os.path.exists(storageDir):
         os.makedirs(storageDir)
@@ -69,7 +72,9 @@ def save_patch(storageDir, fileName, file, dup_count):
             dup_count += 1
     return patch_path, dup_count
         
-"""
+
+def processPatch(patchPath, dstPath, typePatch):
+    """
     processPatch
     To process a patch
     This is done before bein able to classify the patch
@@ -77,8 +82,7 @@ def save_patch(storageDir, fileName, file, dup_count):
     @patchPath - the path where the patch file is stored
     @dstPath - the path where the destination file is stored
     @typePatch - the kind of patch we are dealing with, buggy or fixed
-"""
-def processPatch(patchPath, dstPath, typePatch):
+    """
                     
     patch = patchloader.PatchLoader()
     npatch = patch.traverse(patchPath, typePatch)
@@ -88,28 +92,32 @@ def processPatch(patchPath, dstPath, typePatch):
     
     return patch, source
 
-"""
+
+def apiRequest(url, token):
+    """
     apiRequest
     To make api requests to the GitHub API
     
     @url - the url for the API
     @token - GitHub API token
-"""
-def apiRequest(url, token):
+    """
+
     header = {'Authorization': 'token %s' % token}
     response = requests.get(url, headers=header)
     return response
 
-"""
+def get_ext(file):
+    """
     get_ext
     Extract the extension of the a file
     
     @file - the file from which to extract the file
-"""
-def get_ext(file):
+    """
     ext = file.split['.'][-1]
 
-"""
+
+def getFileBeforePatch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file, fileDir, fileName, token):
+    """
     getFileBeforePatch
     Extracts the buggy file using the GitHub API
     
@@ -122,8 +130,7 @@ def get_ext(file):
     @fileDir - the sub directory where to store the file
     @fileName - a name to store the file
     @token - token needed for the GitHub API
-"""
-def getFileBeforePatch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file, fileDir, fileName, token):
+    """
     fileBeforePatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/{sha}/before_patch/{fileDir}'
     beforePatch_url = f'{constant.GITHUB_RAW_URL}{mainline}/{parent}/{file}'
     fileBeforePatch = apiRequest(beforePatch_url, token)
@@ -167,7 +174,9 @@ def calcMatchPercentage(results, hashes):
     else:
         return 0
 
-"""
+
+def find_hunk_matches(match_items, _type, important_hashes, source_hashes):
+    """
     find_hunk_matches
     To find the different matches between two hunk using the hashed values
     
@@ -175,8 +184,8 @@ def calcMatchPercentage(results, hashes):
     @_type
     @important_hashes
     @source_hashes
-"""
-def find_hunk_matches(match_items, _type, important_hashes, source_hashes):
+    """
+
     seq_matches = {} 
 
     for patch_nr in match_items:
@@ -217,14 +226,15 @@ def find_hunk_matches(match_items, _type, important_hashes, source_hashes):
     
     return seq_matches
 
-"""
+
+def classify_hunk(class_patch, class_buggy):
+    """
     classify_hunk
     To classify a hunk
     
     @class_patch
     @class_buggy
-"""
-def classify_hunk(class_patch, class_buggy):
+    """
     
     finalClass = ''
     if class_patch == 'ED' and class_buggy =='MO':
@@ -247,13 +257,15 @@ def classify_hunk(class_patch, class_buggy):
         finalClass = 'NA'
     return finalClass
 
-"""
+
+def classify_patch(hunk_classifications):
+    """
     classify_patch
     To classify a patch based on the hunks
     
     @hunk_classifications - the classifications for the different hunks in the .diff of a file changed in a PR
-"""
-def classify_patch(hunk_classifications):
+    """
+
     NA_total = 0
     MO_total = 0
     ED_total = 0
@@ -290,7 +302,9 @@ def classify_patch(hunk_classifications):
             
     return finalClass
 
-"""
+
+def find_hunk_matches_w_important_hash(match_items, _type, important_hashes, source_hashes):
+    """
     find_hunk_matches_w_important_hash
     To find the different matches between two hunk using the hashed values and using the important hash feature
     
@@ -298,8 +312,8 @@ def classify_patch(hunk_classifications):
     @_type
     @important_hashes
     @source_hashes
-"""
-def find_hunk_matches_w_important_hash(match_items, _type, important_hashes, source_hashes):
+    """
+
     seq_matches = {} 
     test = []
     for lines in important_hashes:
@@ -370,13 +384,13 @@ def find_hunk_matches_w_important_hash(match_items, _type, important_hashes, sou
         
     return seq_matches 
 
-"""
+def getFirstLastCommit(pr_commits):
+    """
     getFirstLastCommit
     Retrieve the first and the last commit of a pull request
     
     @pr_commits
-"""
-def getFirstLastCommit(pr_commits):
+    """
     first_commit = {}
     last_commit = {}
     for files in pr_commits:
