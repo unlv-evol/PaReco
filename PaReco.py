@@ -9,7 +9,7 @@ from src.core import dataLoader as dataloader
 from src.utils import classifier as classifier
 from src.utils import totals as totals
 from src.utils import analysis as analysis
-from src.core.patchExtractor import divergence_date, pr_patches
+from src.core.patchExtractor import divergence_date, pullrequest_patches
     
 class PaReco:
     def __init__(self, params):
@@ -68,7 +68,7 @@ class PaReco:
         pr_patch_ml_str = ''
         pr_title_ml_str = ''
 
-        pr_patch_ml, pr_title_ml, pr_all_merged_ml, self.ct = pr_patches(self.variant1, self.diverge_date, self.cut_off_date, self.token_list, self.ct)
+        pr_patch_ml, pr_title_ml, pr_all_merged_ml, self.ct = pullrequest_patches(self.variant1, self.diverge_date, self.cut_off_date, self.token_list, self.ct)
 
         # at least one of the mainline or fork should have a pr with patch
         if len(pr_patch_ml) > 0:
@@ -203,8 +203,8 @@ class PaReco:
         analysis.all_class_bar(totals_list, self.repo_file, self.variant1, self.variant2, True)
         
     def fetchPrData(self):
-        destination_sha, self.ct = dataloader.getDestinationSha(self.variant2, self.cut_off_date, self.token_list, self.ct)
-        self.ct,  self.repo_data, req, runtime = dataloader.fetchPrData(self.variant1, self.variant2, self.prs, destination_sha, self.token_list, self.ct)
+        destination_sha, self.ct = dataloader.get_destination_sha(self.variant2, self.cut_off_date, self.token_list, self.ct)
+        self.ct,  self.repo_data, req, runtime = dataloader.fetch_pullrequest_data(self.variant1, self.variant2, self.prs, destination_sha, self.token_list, self.ct)
 
 #     def fetchRepoData(self):
 #         print(self.prs)
@@ -262,15 +262,15 @@ class PaReco:
                                         if len(files[file]) == 1:
                                             parent = files[file][0]['parent_sha']
                                             sha = files[file][0]['commit_sha']
-                                            fileName = commitloader.fileName(file)
-                                            fileDir = commitloader.fileDir(file)
+                                            fileName = commitloader.file_name(file)
+                                            fileDir = commitloader.file_dir(file)
                                             status = files[file][0]['status']
                                         else:
                                             first_commit, last_commit = classifier.getFirstLastCommit(self.repo_data[pr_nr]['commits_data'])       
                                             parent = first_commit['parent_sha']
                                             sha = last_commit['commit_sha']
-                                            fileName = commitloader.fileName(file)
-                                            fileDir = commitloader.fileDir(file)
+                                            fileName = commitloader.file_name(file)
+                                            fileDir = commitloader.file_dir(file)
                                             status = first_commit['status']
 
                                             """
