@@ -1,5 +1,8 @@
 # tokens
 tokens.txt
+src/notebooks/Repos_files
+src/notebooks/Repos_results
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
