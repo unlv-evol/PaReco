@@ -12,9 +12,10 @@ import time
 import mimetypes
     
 from utils import common
+from utils.helpers import api_request
 from constants import constant
-import patchLoader as patchloader
-import sourceLoader as sourceloader
+from . import patchLoader as patchloader
+from . import sourceLoader as sourceloader
 
 try:
     import argparse
@@ -24,23 +25,7 @@ except ImportError as err:
     sys.exit(-1)
 
 
-def apiRequest(url, token):
-    '''Takes the URL for the request and token
-    Examples:
-        >> apiRequest("https://github.com/linkedin", "xxxxxxxx")
-    Args:
-        url (String): the url for the request
-        token (String): GitHub API token
-    Return:
-        response body of the request on json format
-    '''
-    header = {'Authorization': 'token %s' % token}
-    response = requests.get(url, headers=header)
-    jsonResponse = json.loads(response.content)
-    return jsonResponse
-
-
-def getCommitsAhead(mainline, fork, commitToken, compareToken):
+def get_commits_ahead(mainline, fork, commit_token, compare_token):
     """
     Get the commits that the mainline is ahead of the variant
 
@@ -49,21 +34,20 @@ def getCommitsAhead(mainline, fork, commitToken, compareToken):
     Args:
         mainline (String): the mainline author/repo
         fork (String): the fork author/repo 
-        commitToken (String): the token used for constructin the compareUrl
+        commitToken (String): the token used for constructing the compareUrl
         compareToken (String): the token used for comparing mainline and fork
     
     Return:
         List of commits a head 
     """  
 
-    compareUrl = f"{constant.GITHUB_BASE_URL}{fork}/compare/master...{mainline.split('/')[0]}:master?access_token={compareToken}"
+    compare_url = f"{constant.GITHUB_BASE_URL}{fork}/compare/master...{mainline.split('/')[0]}:master?access_token={compare_token}"
+    json_commits = api_request(compare_url)
 
-    jsonCommits = apiRequest(compareUrl)
-
-    return jsonCommits["commits"]
+    return json_commits["commits"]
 
 
-def getCommit(commit, getCommitToken):
+def get_commit_files(commit, commit_token):
     """Get the files for each commit
 
     Args:
@@ -78,6 +62,7 @@ def getCommit(commit, getCommitToken):
         
     }
     """ 
+    commitFilesDict = {}
     sha = commit["sha"]
     commitUrl = commit['url']
 
@@ -85,11 +70,11 @@ def getCommit(commit, getCommitToken):
     commitFilesDict[sha]["commitUrl"] = commitUrl
     commitFilesDict[sha]["files"] = list()
 
-    commit = apiRequest(f'{commitUrl}?access_token={getCommitToken}')
+    commit = api_request(f'{commitUrl}?access_token={commit_token}')
 
     return commit
 
-def findFile(filename, repo, token, sha):
+def find_file(filename, repo, token, sha):
     """
     findFile(filename, repo)
     Check if the file exists in the other repository
@@ -100,8 +85,8 @@ def findFile(filename, repo, token, sha):
         token (String): the token for the api request
         sha (String): the GitHub sha
     """
-    requestUrl = f"{constant.GITHUB_BASE_URL}{repo}/contents/{filename}?ref={sha}"
-    response = apiRequest(requestUrl,token) 
+    request_url = f"{constant.GITHUB_BASE_URL}{repo}/contents/{filename}?ref={sha}"
+    response = api_request(request_url,token) 
     path = ''
     try:
         path = response['path']
@@ -110,7 +95,7 @@ def findFile(filename, repo, token, sha):
         return False
 
 
-def fileName(name):
+def file_name(name):
     """
     fileName(name)
     Extract the file name used for storing the file
@@ -127,7 +112,7 @@ def fileName(name):
     else: 
         sys.exit(1)
     
-def fileDir(name):
+def file_dir(name):
     if name.startswith('.'):
         return (name[1])
     elif '/' in name:
@@ -138,7 +123,7 @@ def fileDir(name):
         sys.exit(1)
     
 
-def getPatch(file, storageDir, fileName):
+def get_patch(file, storageDir, fileName):
     """
     get_patch(url, token)
     Send a request to the github api to find retrieve the patch of a commit and saves it to a .patch file
@@ -158,7 +143,7 @@ def getPatch(file, storageDir, fileName):
         f.write(file)
         f.close()
 
-def saveFile(file, storageDir, fileName):
+def save_file(file, storageDir, fileName):
     if not os.path.exists(storageDir):
         os.makedirs(storageDir)
         f = open(storageDir + fileName, 'xb')
