@@ -1,28 +1,31 @@
-import os
-import requests
 import csv
+import difflib
 import json
-import sys
+import os
+import pickle
 import re
+import sys
 import time
 from collections import defaultdict
-import bitarray
-import pickle
-import difflib
 from pprint import pprint
 
-from utils import common
+import bitarray
+import requests
+
 from constants import constant
-import commitLoader as commitloader
+from core import commitLoader as commitloader
+from utils import common
+from utils.helpers import api_request
 
 try:
     import argparse
+
     import magic
 except ImportError as err:
     print (err)
     sys.exit(-1)
 
-def fetchPrData(source, destination, prs, destination_sha, token_list, ct):
+def fetch_pullrequest_data(source, destination, prs, destination_sha, token_list, ct):
     print('Fetching commit information and files from patches...')
     start = time.time()
     req = 0
@@ -37,7 +40,7 @@ def fetchPrData(source, destination, prs, destination_sha, token_list, ct):
             if ct == lenTokens:
                 ct = 0
             pr_request = f'{constant.GITHUB_BASE_URL}{source}/pulls/{k}'
-            pr = commitloader.apiRequest(pr_request, token_list[ct])
+            pr = api_request(pr_request, token_list[ct])
             ct += 1
             req += 1
 
@@ -45,7 +48,7 @@ def fetchPrData(source, destination, prs, destination_sha, token_list, ct):
             if ct == lenTokens:
                 ct = 0
             commits_url = pr['commits_url']
-            commits = commitloader.apiRequest(commits_url, token_list[ct])
+            commits = api_request(commits_url, token_list[ct])
             common.verbose_print(f'ct ={ct}')
             ct += 1
             req += 1
@@ -64,7 +67,7 @@ def fetchPrData(source, destination, prs, destination_sha, token_list, ct):
                 if ct == lenTokens:
                     ct = 0
                 commit_url = i['url']
-                commit = commitloader.apiRequest(commit_url, token_list[ct])
+                commit = api_request(commit_url, token_list[ct])
                 ct += 1
                 req += 1
 
@@ -81,7 +84,7 @@ def fetchPrData(source, destination, prs, destination_sha, token_list, ct):
                             commits_data[file_name] = list()
                             if ct == lenTokens:
                                 ct = 0
-                            if commitloader.findFile(file_name, destination, token_list[ct], destination_sha):
+                            if commitloader.find_file(file_name, destination, token_list[ct], destination_sha):
                                 sub = {}
                                 sub['commit_url'] = commit_url
                                 sub['commit_sha'] = commit['sha']
@@ -96,7 +99,7 @@ def fetchPrData(source, destination, prs, destination_sha, token_list, ct):
                         else:
                             if ct == lenTokens:
                                 ct = 0
-                            if commitloader.findFile(file_name, destination, token_list[ct], destination_sha):
+                            if commitloader.find_file(file_name, destination, token_list[ct], destination_sha):
                                 sub = {}
                                 sub['commit_url'] = commit_url
                                 sub['commit_sha'] = commit['sha']
@@ -122,12 +125,12 @@ def fetchPrData(source, destination, prs, destination_sha, token_list, ct):
     
     return ct, pr_data, req, runtime
 
-def getDestinationSha(destination, cut_off_date, token_list, ct):
+def get_destination_sha(destination, cut_off_date, token_list, ct):
     destination_sha = ''
     lenTokens = len(token_list)
     if ct == lenTokens:
         ct = 0
-    cut_off_commits = commitloader.apiRequest(f'https://api.github.com/repos/{destination}/commits?until={cut_off_date}', token_list[ct])
+    cut_off_commits = api_request(f'{constant.GITHUB_BASE_URL}{destination}/commits?until={cut_off_date}', token_list[ct])
     ct += 1
     destination_sha = cut_off_commits[0]['sha']
     return destination_sha, ct
