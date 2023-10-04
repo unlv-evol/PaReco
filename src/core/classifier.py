@@ -13,9 +13,10 @@ from pprint import pprint
 
 from utils import common
 from constants import constant
-import patchLoader as patchloader
-import sourceLoader as sourceloader
-import commitLoader as commitloader
+from . import patchLoader as patchloader
+from . import sourceLoader as sourceloader
+from . import commitLoader as commitloader
+from utils.helpers import api_request
 
 
 def unified_diff(before, after):
@@ -73,7 +74,7 @@ def save_patch(storageDir, fileName, file, dup_count):
     return patch_path, dup_count
         
 
-def processPatch(patchPath, dstPath, typePatch):
+def process_patch(patchPath, dstPath, typePatch):
     """
     processPatch
     To process a patch
@@ -92,20 +93,6 @@ def processPatch(patchPath, dstPath, typePatch):
     
     return patch, source
 
-
-def apiRequest(url, token):
-    """
-    apiRequest
-    To make api requests to the GitHub API
-    
-    @url - the url for the API
-    @token - GitHub API token
-    """
-
-    header = {'Authorization': 'token %s' % token}
-    response = requests.get(url, headers=header)
-    return response
-
 def get_ext(file):
     """
     get_ext
@@ -116,7 +103,7 @@ def get_ext(file):
     ext = file.split['.'][-1]
 
 
-def getFileBeforePatch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file, fileDir, fileName, token):
+def get_file_before_patch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file, fileDir, fileName, token):
     """
     getFileBeforePatch
     Extracts the buggy file using the GitHub API
@@ -133,18 +120,18 @@ def getFileBeforePatch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file, fi
     """
     fileBeforePatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/{sha}/before_patch/{fileDir}'
     beforePatch_url = f'{constant.GITHUB_RAW_URL}{mainline}/{parent}/{file}'
-    fileBeforePatch = apiRequest(beforePatch_url, token)
-    beforePatch = commitloader.saveFile(fileBeforePatch.content, fileBeforePatchDir, fileName)
+    fileBeforePatch = api_request(beforePatch_url, token)
+    beforePatch = commitloader.save_file(fileBeforePatch.content, fileBeforePatchDir, fileName)
     return fileBeforePatchDir + fileName, beforePatch_url
 
-def getFileAfterPatch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir, fileName, token):
+def get_file_after_patch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir, fileName, token):
     fileAfterPatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/{sha}/after_patch/{fileDir}'
     fileAfterPatchUrl = f'{constant.GITHUB_RAW_URL}{mainline}/{sha}/{file}'
-    fileAfterPatch = apiRequest(fileAfterPatchUrl, token)
-    afterPatch = commitloader.saveFile(fileAfterPatch.content, fileAfterPatchDir, fileName)
+    fileAfterPatch = api_request(fileAfterPatchUrl, token)
+    afterPatch = commitloader.save_file(fileAfterPatch.content, fileAfterPatchDir, fileName)
     return fileAfterPatchDir + fileName, fileAfterPatchUrl
 
-def getFileFromDest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName, token):
+def get_file_from_dest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName, token):
     destPath = f'{repo_dir}{str(pair_nr)}/{variant}/{fileDir}'
     
     if not os.path.exists(destPath):
@@ -152,11 +139,11 @@ def getFileFromDest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName, to
 
     dest_url = f'{constant.GITHUB_RAW_URL}{variant}/{sha}/{fileDir}{fileName}'
 
-    destFile = apiRequest(dest_url, token)
-    upstream = commitloader.saveFile(destFile.content, destPath, fileName)
+    destFile = api_request(dest_url, token)
+    upstream = commitloader.save_file(destFile.content, destPath, fileName)
     return destPath + fileName, dest_url
     
-def calcMatchPercentage(results, hashes):
+def calc_match_percentage(results, hashes):
     matched_code = []
     not_matched = []
     total = 0
@@ -384,7 +371,7 @@ def find_hunk_matches_w_important_hash(match_items, _type, important_hashes, sou
         
     return seq_matches 
 
-def getFirstLastCommit(pr_commits):
+def get_first_last_commit(pr_commits):
     """
     getFirstLastCommit
     Retrieve the first and the last commit of a pull request
