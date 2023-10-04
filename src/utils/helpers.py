@@ -20,7 +20,7 @@ def get_response(url, token_list, ct):
     Return:
         Jsondata (object): json data 
     '''
-    jsonData = None
+    json_data = None
 
     # token_list, len_tokens = tokens()
     len_tokens = len(token_list)
@@ -28,11 +28,26 @@ def get_response(url, token_list, ct):
         ct = ct % len_tokens
         headers = {'Authorization': 'Bearer {}'.format(token_list[ct])}
         request = requests.get(url, headers=headers)
-        jsonData = json.loads(request.content)
+        json_data = json.loads(request.content)
         ct += 1
     except Exception as e:
         print(e)
-    return jsonData, ct
+    return json_data, ct
+
+def api_request(url, token):
+    '''Takes the URL for the request and token
+    Examples:
+        >> apiRequest("https://github.com/linkedin", "xxxxxxxx")
+    Args:
+        url (String): the url for the request
+        token (String): GitHub API token
+    Return:
+        response body of the request on json format
+    '''
+    header = {'Authorization': 'token %s' % token}
+    response = requests.get(url, headers=header)
+    json_response = json.loads(response.content)
+    return json_response
 
 
 def repo_commit_date(repo, date, token_list, ct):
