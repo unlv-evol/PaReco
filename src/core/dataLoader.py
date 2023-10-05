@@ -1,16 +1,5 @@
-import csv
-import difflib
-import json
-import os
-import pickle
-import re
 import sys
 import time
-from collections import defaultdict
-from pprint import pprint
-
-import bitarray
-import requests
 
 from constants import constant
 from core import commitLoader as commitloader
@@ -25,27 +14,27 @@ except ImportError as err:
     print (err)
     sys.exit(-1)
 
-def fetch_pullrequest_data(source, destination, prs, destination_sha, token_list, ct):
+def fetch_pullrequest_data(source, destination, pullrequests, destination_sha, token_list, ct):
     print('Fetching commit information and files from patches...')
     start = time.time()
     req = 0
-    pr_data = {}
-    lenTokens = len(token_list)
+    pullrequest_data = {}
+    token_length = len(token_list)
     
-    for k in prs:
+    for pullrequest in pullrequests:
         try:
-            pr_data[k] = {}
+            pullrequest_data[pullrequest] = {}
 
             # Get the PR
-            if ct == lenTokens:
+            if ct == token_length:
                 ct = 0
-            pr_request = f'{constant.GITHUB_BASE_URL}{source}/pulls/{k}'
+            pr_request = f'{constant.GITHUB_BASE_URL}{source}/pulls/{pullrequest}'
             pr = api_request(pr_request, token_list[ct])
             ct += 1
             req += 1
 
             # Get the commit
-            if ct == lenTokens:
+            if ct == token_length:
                 ct = 0
             commits_url = pr['commits_url']
             commits = api_request(commits_url, token_list[ct])
@@ -57,14 +46,14 @@ def fetch_pullrequest_data(source, destination, prs, destination_sha, token_list
 
             nr_files = pr['changed_files']
 
-            pr_data[k]['pr_url'] = pr_request
-            pr_data[k]['commits_url'] = commits_url
-            pr_data[k]['changed_files'] = nr_files
-            pr_data[k]['commits_data'] = list()
-            pr_data[k]['destination_sha'] = destination_sha
+            pullrequest_data[pullrequest]['pr_url'] = pr_request
+            pullrequest_data[pullrequest]['commits_url'] = commits_url
+            pullrequest_data[pullrequest]['changed_files'] = nr_files
+            pullrequest_data[pullrequest]['commits_data'] = list()
+            pullrequest_data[pullrequest]['destination_sha'] = destination_sha
             
             for i in commits:
-                if ct == lenTokens:
+                if ct == token_length:
                     ct = 0
                 commit_url = i['url']
                 commit = api_request(commit_url, token_list[ct])
@@ -79,10 +68,11 @@ def fetch_pullrequest_data(source, destination, prs, destination_sha, token_list
                         added_lines = j['additions']
                         removed_lines = j['deletions']
                         changes = j['changes']
-                        file_ext = commitloader.get_file_type(file_name)
+
+                        #file_ext = commitloader.get_file_type(file_name)
                         if file_name not in commits_data:
                             commits_data[file_name] = list()
-                            if ct == lenTokens:
+                            if ct == token_length:
                                 ct = 0
                             if commitloader.find_file(file_name, destination, token_list[ct], destination_sha):
                                 sub = {}
@@ -97,7 +87,7 @@ def fetch_pullrequest_data(source, destination, prs, destination_sha, token_list
                                 commits_data[file_name].append(sub)
                             ct += 1
                         else:
-                            if ct == lenTokens:
+                            if ct == token_length:
                                 ct = 0
                             if commitloader.find_file(file_name, destination, token_list[ct], destination_sha):
                                 sub = {}
@@ -114,7 +104,7 @@ def fetch_pullrequest_data(source, destination, prs, destination_sha, token_list
                 except Exception as e:
                     print(e)
                     print('This should only happen if there are no files changed in a commit')
-            pr_data[k]['commits_data'].append(commits_data)
+            pullrequest_data[pullrequest]['commits_data'].append(commits_data)
         except Exception as e:
             print('An error occurred while fetching the pull request information from GitHub.')
             print (f'Error has to do with: {e}')
@@ -123,14 +113,27 @@ def fetch_pullrequest_data(source, destination, prs, destination_sha, token_list
     runtime = end - start
     print('Fetch Runtime: ', runtime)
     
-    return ct, pr_data, req, runtime
+    return ct, pullrequest_data, req, runtime
 
 def get_destination_sha(destination, cut_off_date, token_list, ct):
+    """Get the commit sha at git_head of the variant 
+    
+    Args:
+        destination (String): the repo name of the variant fork e.g. linkedin/kafka
+        cut_off_date (DateTime): the least commit date. This can be the git_head last commit data
+        token_list (List): list of GitHub tokens
+        ct (int): token controller used to rotate token 
+    Return:
+        The last commit sha
+    """
     destination_sha = ''
     lenTokens = len(token_list)
     if ct == lenTokens:
         ct = 0
-    cut_off_commits = api_request(f'{constant.GITHUB_BASE_URL}{destination}/commits?until={cut_off_date}', token_list[ct])
-    ct += 1
-    destination_sha = cut_off_commits[0]['sha']
+    try:
+        cut_off_commits = api_request(f'{constant.GITHUB_BASE_URL}{destination}/commits?page=1&per_page=1&until={cut_off_date}', token_list[ct])
+        ct += 1
+        destination_sha = cut_off_commits[0]['sha']
+    except Exception as e:
+        print("ERORR in func: get_destination_sha")
     return destination_sha, ct

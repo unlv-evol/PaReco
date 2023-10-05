@@ -1,21 +1,10 @@
 import os
-import requests
-import csv
-import json
 import sys
-import re
-import time
-from collections import defaultdict
-import bitarray
-import re
-import time
-import mimetypes
     
 from utils import common
 from utils.helpers import api_request
 from constants import constant
-from . import patchLoader as patchloader
-from . import sourceLoader as sourceloader
+
 
 try:
     import argparse
@@ -30,7 +19,7 @@ def get_commits_ahead(mainline, fork, commit_token, compare_token):
     Get the commits that the mainline is ahead of the variant
 
     Examples:
-        >> getCommitsAhead(mainline, fork)
+        >> get_commits_ahead(mainline, fork)
     Args:
         mainline (String): the mainline author/repo
         fork (String): the fork author/repo 
@@ -76,7 +65,7 @@ def get_commit_files(commit, commit_token):
 
 def find_file(filename, repo, token, sha):
     """
-    findFile(filename, repo)
+    find_file(filename, repo)
     Check if the file exists in the other repository
     
     Args:
@@ -87,7 +76,7 @@ def find_file(filename, repo, token, sha):
     """
     request_url = f"{constant.GITHUB_BASE_URL}{repo}/contents/{filename}?ref={sha}"
     response = api_request(request_url,token) 
-    path = ''
+    # path = ''
     try:
         path = response['path']
         return True

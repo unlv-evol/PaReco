@@ -1,22 +1,23 @@
-import os
-import requests
 import csv
+import difflib
 import json
-import sys
+import os
+import pickle
 import re
+import sys
 import time
 from collections import defaultdict
-
-import pickle
-import difflib
 from pprint import pprint
 
-from utils import common
+import requests
+
 from constants import constant
+from utils import common
+from utils.helpers import api_request
+
+from . import commitLoader as commitloader
 from . import patchLoader as patchloader
 from . import sourceLoader as sourceloader
-from . import commitLoader as commitloader
-from utils.helpers import api_request
 
 
 def unified_diff(before, after):
@@ -74,7 +75,7 @@ def save_patch(storageDir, fileName, file, dup_count):
     return patch_path, dup_count
         
 
-def process_patch(patchPath, dstPath, typePatch):
+def process_patch(patch_path, dst_path, type_patch):
     """
     processPatch
     To process a patch
@@ -86,10 +87,10 @@ def process_patch(patchPath, dstPath, typePatch):
     """
                     
     patch = patchloader.PatchLoader()
-    npatch = patch.traverse(patchPath, typePatch)
+    npatch = patch.traverse(patch_path, type_patch)
     
     source = sourceloader.SourceLoader()
-    nmatch = source.traverse(dstPath, patch)
+    nmatch = source.traverse(dst_path, patch)
     
     return patch, source
 
@@ -373,7 +374,7 @@ def find_hunk_matches_w_important_hash(match_items, _type, important_hashes, sou
 
 def get_first_last_commit(pr_commits):
     """
-    getFirstLastCommit
+    get_first_last_commit
     Retrieve the first and the last commit of a pull request
     
     @pr_commits
