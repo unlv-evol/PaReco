@@ -1,9 +1,12 @@
 import pandas as pd
 import requests
 import json
+import sys
+import os
 from dateutil import parser
 from datetime import datetime, timedelta
 from constants import constant
+from . import common
 
 def unique(list):
     unique_list = pd.Series(list).drop_duplicates().to_list()
@@ -121,3 +124,198 @@ def divergence_date(mainline, variant, token_list, ct, least_date='', diverge_da
         print(f'{constant.GITHUB_BASE_URL}{mainline}/compare/{sha_ml}...{fork1[0]}:{sha_vr}')
 
     return fork_date, diverge_date, least_date, ahead, behind, ct
+
+
+def get_commits_ahead(mainline, fork, compare_token):
+    """
+    Get the commits that the mainline is ahead of the variant
+
+    Examples:
+        >> get_commits_ahead(mainline, fork)
+    Args:
+        mainline (String): the mainline author/repo
+        fork (String): the fork author/repo 
+        commitToken (String): the token used for constructing the compareUrl
+        compareToken (String): the token used for comparing mainline and fork
+    
+    Return:
+        List of commits a head 
+    """  
+
+    compare_url = f"{constant.GITHUB_BASE_URL}{fork}/compare/master...{mainline.split('/')[0]}:master"
+    json_commits = api_request(compare_url, compare_token)
+
+    return json_commits["commits"]
+
+
+def get_commit_files(commit, commit_token):
+    """Get the files for each commit
+
+    Args:
+        commit (String): the commits for which files need to be retrieved
+        getCommitToken (String): the token used for the qpi request to get the commit
+    
+    commitFilesDict={
+        "sha": {
+            "commitUrl": url
+            "files": list(file 1, file 2, ... , file n)
+        }
+        
+    }
+    """ 
+    commitFilesDict = {}
+    sha = commit["sha"]
+    commitUrl = commit['url']
+
+    commitFilesDict[sha] = {}
+    commitFilesDict[sha]["commitUrl"] = commitUrl
+    commitFilesDict[sha]["files"] = list()
+
+    commit = api_request(f'{commitUrl}?access_token={commit_token}')
+
+    return commit
+
+
+def find_file(filename, repo, token, sha):
+    """
+    find_file(filename, repo)
+    Check if the file exists in the other repository
+    
+    Args:
+        filename (String): the file path to be checked for existence
+        repo (String): the repository in which the existence of the file must be checked
+        token (String): the token for the api request
+        sha (String): the GitHub sha
+    """
+    request_url = f"{constant.GITHUB_BASE_URL}{repo}/contents/{filename}?ref={sha}"
+    response = api_request(request_url,token) 
+    # path = ''
+    try:
+        path = response['path']
+        return True
+    except Exception as e:
+        return False
+
+
+def file_name(name):
+    """
+    file_name(name)
+    Extract the file name used for storing the file
+    
+    Args:
+        name (String): the patch retrieved from the commit api for the file
+    """
+    if name.startswith('.'):
+        return (name[1:])
+    elif '/' in name:
+        return(name.split('/')[-1])
+    elif '/' not in name:
+        return(name)
+    else: 
+        sys.exit(1)
+
+
+def file_dir(name):
+    if name.startswith('.'):
+        return (name[1])
+    elif '/' in name:
+        return(name.split('/')[:-1])
+    elif '/' not in name:
+        return ''
+    else: 
+        sys.exit(1)
+    
+
+def get_patch(file, storageDir, fileName):
+    """
+    get_patch(url, token)
+    Send a request to the github api to find retrieve the patch of a commit and saves it to a .patch file
+    
+    Args:
+        file (String): the patch file
+        storageDir (String): the storage directory
+        fileName (String): the file name of the patch to be saved
+    """
+    if not os.path.exists(storageDir):
+        os.makedirs(storageDir)
+        f = open(storageDir + fileName, 'w')
+        f.write(file)
+        f.close()
+    else:
+        f = open(storageDir + fileName, 'w')
+        f.write(file)
+        f.close()
+
+def save_file(file, storageDir, fileName):
+    if not os.path.exists(storageDir):
+        os.makedirs(storageDir)
+        f = open(storageDir + fileName, 'xb')
+        f.write(file)
+        f.close()
+    else:
+        f = open(storageDir + fileName, 'wb')
+        f.write(file)
+        f.close()
+
+def get_file_type(file_path):
+    '''
+    Guess a file type based upon a file extension (mimetypes module)
+
+    Args:
+        file_path (String): the file path
+    Return:
+        magic_ext
+    '''
+    ext = file_path.split('.')[-1]
+    magic_ext = None
+
+    if ext == 'c' or ext == 'h':
+        magic_ext = common.FileExt.C
+    elif ext == 'java':
+        magic_ext = common.FileExt.Java
+    elif ext == 'sh':
+        magic_ext = common.FileExt.ShellScript
+    elif ext == 'pl':
+        magic_ext = common.FileExt.Perl
+    elif ext == 'py':
+        magic_ext = common.FileExt.Python
+    elif ext == 'php':
+        magic_ext = common.FileExt.PHP
+    elif ext == 'rb':
+        magic_ext = common.FileExt.Ruby
+    else:
+        magic_ext = common.FileExt.Text
+    return magic_ext 
+
+def get_first_last_commit(pr_commits):
+    '''
+    Retrieve the first and the last commit of a pull request
+    
+    Args:
+        pr_commits (String): List of commits in a pull request
+    Return:
+        The frist and last commit
+    '''
+    first_commit = {}
+    last_commit = {}
+    for files in pr_commits:
+        for p in files:
+            first_commit_date = ''
+            last_commit_date = ''
+            for commit in files[p]:
+                commit_date =commit['commit_date']
+                if first_commit_date == '':
+                    first_commit_date = commit_date
+                    first_commit = commit
+                else:
+                    if commit_date < first_commit_date:
+                        first_commit_date = commit_date
+                        first_commit = commit   
+                    if last_commit_date == '':
+                        last_commit_date = commit_date
+                        last_commit = commit
+                    else:
+                        if commit_date > last_commit_date:
+                            last_commit_date = commit_date
+                            last_commit = commit
+    return first_commit, last_commit
