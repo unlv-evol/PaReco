@@ -1,5 +1,3 @@
-import requests
-import json
 from dateutil import parser
 from constants import constant
 from utils import helpers
