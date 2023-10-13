@@ -1,18 +1,10 @@
 import sys
 import time
-
 from constants import constant
-from core import commitLoader as commitloader
 from utils import common
-from utils.helpers import api_request
-
-try:
-    import argparse
-
-    import magic
-except ImportError as err:
-    print (err)
-    sys.exit(-1)
+from utils import helpers
+import urllib.request
+from unidiff import PatchSet
 
 def fetch_pullrequest_data(source, destination, pullrequests, destination_sha, token_list, ct):
     print('Fetching commit information and files from patches...')
@@ -29,7 +21,7 @@ def fetch_pullrequest_data(source, destination, pullrequests, destination_sha, t
             if ct == token_length:
                 ct = 0
             pr_request = f'{constant.GITHUB_BASE_URL}{source}/pulls/{pullrequest}'
-            pr = api_request(pr_request, token_list[ct])
+            pr = helpers.api_request(pr_request, token_list[ct])
             ct += 1
             req += 1
 
@@ -37,7 +29,7 @@ def fetch_pullrequest_data(source, destination, pullrequests, destination_sha, t
             if ct == token_length:
                 ct = 0
             commits_url = pr['commits_url']
-            commits = api_request(commits_url, token_list[ct])
+            commits = helpers.api_request(commits_url, token_list[ct])
             common.verbose_print(f'ct ={ct}')
             ct += 1
             req += 1
@@ -56,7 +48,7 @@ def fetch_pullrequest_data(source, destination, pullrequests, destination_sha, t
                 if ct == token_length:
                     ct = 0
                 commit_url = i['url']
-                commit = api_request(commit_url, token_list[ct])
+                commit = helpers.api_request(commit_url, token_list[ct])
                 ct += 1
                 req += 1
 
@@ -74,7 +66,7 @@ def fetch_pullrequest_data(source, destination, pullrequests, destination_sha, t
                             commits_data[file_name] = list()
                             if ct == token_length:
                                 ct = 0
-                            if commitloader.find_file(file_name, destination, token_list[ct], destination_sha):
+                            if helpers.find_file(file_name, destination, token_list[ct], destination_sha):
                                 sub = {}
                                 sub['commit_url'] = commit_url
                                 sub['commit_sha'] = commit['sha']
@@ -89,7 +81,7 @@ def fetch_pullrequest_data(source, destination, pullrequests, destination_sha, t
                         else:
                             if ct == token_length:
                                 ct = 0
-                            if commitloader.find_file(file_name, destination, token_list[ct], destination_sha):
+                            if helpers.find_file(file_name, destination, token_list[ct], destination_sha):
                                 sub = {}
                                 sub['commit_url'] = commit_url
                                 sub['commit_sha'] = commit['sha']
@@ -115,6 +107,17 @@ def fetch_pullrequest_data(source, destination, pullrequests, destination_sha, t
     
     return ct, pullrequest_data, req, runtime
 
+def fetch_pullrequest_data_unidiff(repository, pullrequests):
+    pullrequest_data = {}
+    for pullrequest in pullrequests:
+        diff = urllib.request.urlopen(f'{constant.GITHUB_BASE_URL}{repository}/pull/{pullrequest}.diff')
+        encoding  = diff.headers.get_charsets()[0]
+        patches  = PatchSet(diff, encoding=encoding)
+        for patch in patches:
+            pass
+
+
+
 def get_destination_sha(destination, cut_off_date, token_list, ct):
     """Get the commit sha at git_head of the variant 
     
@@ -126,14 +129,13 @@ def get_destination_sha(destination, cut_off_date, token_list, ct):
     Return:
         The last commit sha
     """
-    destination_sha = ''
     lenTokens = len(token_list)
     if ct == lenTokens:
         ct = 0
     try:
-        cut_off_commits = api_request(f'{constant.GITHUB_BASE_URL}{destination}/commits?page=1&per_page=1&until={cut_off_date}', token_list[ct])
+        cut_off_commits = helpers.api_request(f'{constant.GITHUB_BASE_URL}{destination}/commits?page=1&per_page=1&until={cut_off_date}', token_list[ct])
         ct += 1
         destination_sha = cut_off_commits[0]['sha']
     except Exception as e:
-        print("ERORR in func: get_destination_sha")
+        print("ERORR in func: get_destination_sha: ", e)
     return destination_sha, ct

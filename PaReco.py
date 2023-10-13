@@ -1,15 +1,12 @@
-import sys
 import time
-import pickle
 import pandas as pd
-
 from src.utils import common as common
-from src.core import commitLoader as commitloader
 from src.core import dataLoader as dataloader
-from src.utils import classifier as classifier
+from src.core import classifier as classifier
+from src.utils import helpers
 from src.utils import totals as totals
 from src.utils import analysis as analysis
-from src.core.patchExtractor import divergence_date, pullrequest_patches
+from src.core.patchExtractor import pullrequest_patches
     
 class PaReco:
     def __init__(self, params):
@@ -52,7 +49,7 @@ class PaReco:
 #         with open(self.main_dir_results + csv_name, 'w') as f:
     
     def getDates(self):
-        self.fork_date, self.diverge_date, self.cut_off_date, self.ahead_by, self.behind_by, self.ct = divergence_date(self.variant1, self.variant2, self.token_list, self.ct, self.cut_off_date, self.diverge_date)
+        self.fork_date, self.diverge_date, self.cut_off_date, self.ahead_by, self.behind_by, self.ct = helpers.divergence_date(self.variant1, self.variant2, self.token_list, self.ct, self.cut_off_date, self.diverge_date)
         print(f'The divergence_date of the repository {self.variant2} is {self.diverge_date} and the cut_off_date is {self.cut_off_date}.')
         print(f'The variant2 is ==>')
         print(f'\t Ahead by {self.ahead_by} patches')
@@ -231,7 +228,7 @@ class PaReco:
                     for files in self.repo_data[pr_nr]['commits_data']:
                         for file in files:
                             self.result_dict[pr_nr][file] ={}
-                            file_ext = commitloader.get_file_type(file)
+                            file_ext = helpers.get_file_type(file)
 
                             emptyFilePath = ''
 
@@ -262,15 +259,15 @@ class PaReco:
                                         if len(files[file]) == 1:
                                             parent = files[file][0]['parent_sha']
                                             sha = files[file][0]['commit_sha']
-                                            fileName = commitloader.file_name(file)
-                                            fileDir = commitloader.file_dir(file)
+                                            fileName = helpers.file_name(file)
+                                            fileDir = helpers.file_dir(file)
                                             status = files[file][0]['status']
                                         else:
-                                            first_commit, last_commit = classifier.getFirstLastCommit(self.repo_data[pr_nr]['commits_data'])       
+                                            first_commit, last_commit = helpers.get_first_last_commit(self.repo_data[pr_nr]['commits_data'])       
                                             parent = first_commit['parent_sha']
                                             sha = last_commit['commit_sha']
-                                            fileName = commitloader.file_name(file)
-                                            fileDir = commitloader.file_dir(file)
+                                            fileName = helpers.file_name(file)
+                                            fileDir = helpers.file_dir(file)
                                             status = first_commit['status']
 
                                             """
