@@ -1,21 +1,7 @@
-import csv
 import difflib
-import json
 import os
-import pickle
-import re
-import sys
-import time
-from collections import defaultdict
-from pprint import pprint
-
-import requests
-
 from constants import constant
-from utils import common
-from utils.helpers import api_request
-
-from . import commitLoader as commitloader
+from utils import helpers
 from . import patchLoader as patchloader
 from . import sourceLoader as sourceloader
 
@@ -87,10 +73,16 @@ def process_patch(patch_path, dst_path, type_patch):
     """
                     
     patch = patchloader.PatchLoader()
-    npatch = patch.traverse(patch_path, type_patch)
+    try:
+        patch.traverse(patch_path, type_patch)
+    except Exception as e:
+        print("Error traversing patch:....", e)
     
     source = sourceloader.SourceLoader()
-    nmatch = source.traverse(dst_path, patch)
+    try:
+        source.traverse(dst_path, patch)
+    except Exception as e:
+        print("Error traversing source (variant)....", e)
     
     return patch, source
 
@@ -121,18 +113,26 @@ def get_file_before_patch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file,
     """
     fileBeforePatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/{sha}/before_patch/{fileDir}'
     beforePatch_url = f'{constant.GITHUB_RAW_URL}{mainline}/{parent}/{file}'
-    fileBeforePatch = api_request(beforePatch_url, token)
-    beforePatch = commitloader.save_file(fileBeforePatch.content, fileBeforePatchDir, fileName)
+    fileBeforePatch = helpers.api_request(beforePatch_url, token)
+
+    try:
+        helpers.save_file(fileBeforePatch.content, fileBeforePatchDir, fileName)
+    except Exception as e:
+        print("Could not save file before patch: ", e)
     return fileBeforePatchDir + fileName, beforePatch_url
 
 def get_file_after_patch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir, fileName, token):
     fileAfterPatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/{sha}/after_patch/{fileDir}'
     fileAfterPatchUrl = f'{constant.GITHUB_RAW_URL}{mainline}/{sha}/{file}'
-    fileAfterPatch = api_request(fileAfterPatchUrl, token)
-    afterPatch = commitloader.save_file(fileAfterPatch.content, fileAfterPatchDir, fileName)
+    fileAfterPatch = helpers.api_request(fileAfterPatchUrl, token)
+
+    try:
+        helpers.save_file(fileAfterPatch.content, fileAfterPatchDir, fileName)
+    except Exception as e:
+        print("Could not save file after patch: ", e)
     return fileAfterPatchDir + fileName, fileAfterPatchUrl
 
-def get_file_from_dest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName, token):
+def get_file_from_dest(repo_dir, variant, sha, pair_nr,fileDir, fileName, token):
     destPath = f'{repo_dir}{str(pair_nr)}/{variant}/{fileDir}'
     
     if not os.path.exists(destPath):
@@ -140,8 +140,12 @@ def get_file_from_dest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName,
 
     dest_url = f'{constant.GITHUB_RAW_URL}{variant}/{sha}/{fileDir}{fileName}'
 
-    destFile = api_request(dest_url, token)
-    upstream = commitloader.save_file(destFile.content, destPath, fileName)
+    destFile = helpers.api_request(dest_url, token)
+    
+    try:
+        helpers.save_file(destFile.content, destPath, fileName)
+    except Exception as e:
+        print("Could not save file from upstream")
     return destPath + fileName, dest_url
     
 def calc_match_percentage(results, hashes):
@@ -371,34 +375,3 @@ def find_hunk_matches_w_important_hash(match_items, _type, important_hashes, sou
         seq_matches[i]['class']= _class 
         
     return seq_matches 
-
-def get_first_last_commit(pr_commits):
-    """
-    get_first_last_commit
-    Retrieve the first and the last commit of a pull request
-    
-    @pr_commits
-    """
-    first_commit = {}
-    last_commit = {}
-    for files in pr_commits:
-        for p in files:
-            first_commit_date = ''
-            last_commit_date = ''
-            for commit in files[p]:
-                commit_date =commit['commit_date']
-                if first_commit_date == '':
-                    first_commit_date = commit_date
-                    first_commit = commit
-                else:
-                    if commit_date < first_commit_date:
-                        first_commit_date = commit_date
-                        first_commit = commit   
-                    if last_commit_date == '':
-                        last_commit_date = commit_date
-                        last_commit = commit
-                    else:
-                        if commit_date > last_commit_date:
-                            last_commit_date = commit_date
-                            last_commit = commit
-    return first_commit, last_commit
