@@ -1,12 +1,12 @@
 import time
 import pandas as pd
 from src.utils import common as common
-from src.core import dataLoader as dataloader
+from src.core import data_extractor as dataloader
 from src.core import classifier as classifier
 from src.utils import helpers
 from src.utils import totals as totals
 from src.utils import analysis as analysis
-from src.core.patchExtractor import pullrequest_patches
+from src.core.patch_extractor import pullrequest_patches
     
 class PaReco:
     def __init__(self, params):
@@ -200,7 +200,7 @@ class PaReco:
         analysis.all_class_bar(totals_list, self.repo_file, self.variant1, self.variant2, True)
         
     def fetchPrData(self):
-        destination_sha, self.ct = dataloader.get_destination_sha(self.variant2, self.cut_off_date, self.token_list, self.ct)
+        destination_sha, self.ct = dataloader.get_variant_sha(self.variant2, self.cut_off_date, self.token_list, self.ct)
         self.ct,  self.repo_data, req, runtime = dataloader.fetch_pullrequest_data(self.variant1, self.variant2, self.prs, destination_sha, self.token_list, self.ct)
 
 #     def fetchRepoData(self):
