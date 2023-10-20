@@ -2,8 +2,8 @@ import difflib
 import os
 from constants import constant
 from utils import helpers
-from . import patchLoader as patchloader
-from . import sourceLoader as sourceloader
+from . import patch_loader as patchloader
+from . import source_loader as sourceloader
 
 
 def unified_diff(before, after):
@@ -38,25 +38,31 @@ def save_patch(storageDir, fileName, file, dup_count):
     patch_path = ''
     if not os.path.exists(storageDir):
         os.makedirs(storageDir)
-        patch_path = storageDir + fileName + '.patch'
-        f = open(patch_path, 'x')
-        for line in file[2:]:
-            f.write(line)
-        f.close()
+        patch_path = f'{storageDir}{fileName}.patch'
+        with open(patch_path, 'x') as patch:
+            patch.writelines(file)
+        # f = open(patch_path, 'x')
+        # for line in file[2:]:
+        #     f.write(line)
+        # f.close()
         
     else:
-        if not os.path.isfile(storageDir + fileName):
-            patch_path = storageDir + fileName + '.patch'
-            f = open(patch_path, 'w')
-            for line in file[2:]:
-                f.write(line)
-            f.close()
+        if not os.path.isfile(f'{storageDir}{fileName}'):
+            patch_path = f'{storageDir}{fileName}.patch'
+            with open(patch_path, 'x') as patch:
+                patch.writelines(file)
+            # f = open(patch_path, 'w')
+            # for line in file[2:]:
+            #     f.write(line)
+            # f.close()
         else:
-            patch_path = storageDir + fileName+ '_' + dup_count + '.patch'
-            f = open(patch_path, 'w')
-            for line in file[2:]:
-                f.write(line)
-            f.close()
+            patch_path = f'{storageDir}{fileName}_{dup_count}.patch'
+            with open(patch_path, 'x') as patch:
+                patch.writelines(file)
+            # f = open(patch_path, 'w')
+            # for line in file[2:]:
+            #     f.write(line)
+            # f.close()
             dup_count += 1
     return patch_path, dup_count
         
@@ -96,14 +102,14 @@ def get_ext(file):
     ext = file.split['.'][-1]
 
 
-def get_file_before_patch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file, fileDir, fileName, token):
+def get_file_before_patch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir, fileName, token):
     """
     getFileBeforePatch
     Extracts the buggy file using the GitHub API
     
     @repo_dir - directory where to store the file
     @mainline - the source repository
-    @sha - the commit sha-value that last changed the file
+    @sha - the commit sha-value that last changed the file == before pull request was created
     @parent - the parent commit sha-value of the commit that last changed the file
     @pr_nr - the pull request number of the patch
     @file - the file path in the repository
@@ -111,8 +117,8 @@ def get_file_before_patch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file,
     @fileName - a name to store the file
     @token - token needed for the GitHub API
     """
-    fileBeforePatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/{sha}/before_patch/{fileDir}'
-    beforePatch_url = f'{constant.GITHUB_RAW_URL}{mainline}/{parent}/{file}'
+    fileBeforePatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/before_patch/{fileDir}'
+    beforePatch_url = f'{constant.GITHUB_RAW_URL}{mainline}/{sha}/{file}'
     fileBeforePatch = helpers.api_request(beforePatch_url, token)
 
     try:
@@ -122,7 +128,7 @@ def get_file_before_patch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file,
     return fileBeforePatchDir + fileName, beforePatch_url
 
 def get_file_after_patch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir, fileName, token):
-    fileAfterPatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/{sha}/after_patch/{fileDir}'
+    fileAfterPatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/after_patch/{fileDir}'
     fileAfterPatchUrl = f'{constant.GITHUB_RAW_URL}{mainline}/{sha}/{file}'
     fileAfterPatch = helpers.api_request(fileAfterPatchUrl, token)
 
@@ -149,6 +155,7 @@ def get_file_from_dest(repo_dir, variant, sha, pair_nr,fileDir, fileName, token)
     return destPath + fileName, dest_url
     
 def calc_match_percentage(results, hashes):
+    # Not called anywhere at the moment
     matched_code = []
     not_matched = []
     total = 0
@@ -168,6 +175,7 @@ def calc_match_percentage(results, hashes):
 
 
 def find_hunk_matches(match_items, _type, important_hashes, source_hashes):
+    # Not called anywhere at the moment
     """
     find_hunk_matches
     To find the different matches between two hunk using the hashed values
