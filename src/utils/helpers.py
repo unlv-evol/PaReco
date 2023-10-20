@@ -8,6 +8,9 @@ from datetime import datetime, timedelta
 from constants import constant
 from . import common
 
+class GetOutOfLoop(Exception):
+    pass
+
 def unique(list):
     unique_list = pd.Series(list).drop_duplicates().to_list()
     return unique_list
@@ -37,6 +40,7 @@ def get_response(url, token_list, ct):
         print(e)
     return json_data, ct
 
+
 def api_request(url, token):
     '''Takes the URL for the request and token
     Examples:
@@ -56,7 +60,7 @@ def api_request(url, token):
 def repo_commit_date(repo, date, token_list, ct):
     # start a day before the last commit date
     start_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ") - timedelta(days=1)
-    url = f'{constant.GITHUB_BASE_URL}{repo}/commits?since={start_date}'
+    url = f'{constant.GITHUB_API_BASE_URL}{repo}/commits?since={start_date}'
     try:
         content_arrays, ct = get_response(url, token_list, ct)
         sha = ''
@@ -82,7 +86,7 @@ def repo_dates(repo, token_list, ct):
     '''
     created_at = ''
     updated_at = ''
-    url = f'{constant.GITHUB_BASE_URL}{repo}'
+    url = f'{constant.GITHUB_API_BASE_URL}{repo}'
     # print(url)
     content_arrays, ct = get_response(url, token_list, ct)
     if content_arrays is not None:
@@ -111,7 +115,7 @@ def divergence_date(mainline, variant, token_list, ct, least_date='', diverge_da
     sha_ml, ct = repo_commit_date(mainline, least_date, token_list, ct)
 
     fork1 = variant.split('/') # linkeIn/kafka = linkedin; gets the username
-    url_ml = f'{constant.GITHUB_BASE_URL}{mainline}/compare/{sha_ml}...{fork1[0]}:{sha_vr}'
+    url_ml = f'{constant.GITHUB_API_BASE_URL}{mainline}/compare/{sha_ml}...{fork1[0]}:{sha_vr}'
     try:
         content_arrays_ml, ct = get_response(url_ml, token_list, ct)
         commits = content_arrays_ml['commits'][0]
@@ -121,7 +125,7 @@ def divergence_date(mainline, variant, token_list, ct, least_date='', diverge_da
         behind = content_arrays_ml['behind_by']
 
     except:
-        print(f'{constant.GITHUB_BASE_URL}{mainline}/compare/{sha_ml}...{fork1[0]}:{sha_vr}')
+        print(f'{constant.GITHUB_API_BASE_URL}{mainline}/compare/{sha_ml}...{fork1[0]}:{sha_vr}')
 
     return fork_date, diverge_date, least_date, ahead, behind, ct
 
@@ -142,7 +146,7 @@ def get_commits_ahead(mainline, fork, compare_token):
         List of commits a head 
     """  
 
-    compare_url = f"{constant.GITHUB_BASE_URL}{fork}/compare/master...{mainline.split('/')[0]}:master"
+    compare_url = f"{constant.GITHUB_API_BASE_URL}{fork}/compare/master...{mainline.split('/')[0]}:master"
     json_commits = api_request(compare_url, compare_token)
 
     return json_commits["commits"]
@@ -182,17 +186,18 @@ def find_file(filename, repo, token, sha):
     Check if the file exists in the other repository
     
     Args:
-        filename (String): the file path to be checked for existence
+        filename (String): the filename (including path) to be checked for existence
         repo (String): the repository in which the existence of the file must be checked
         token (String): the token for the api request
         sha (String): the GitHub sha
     """
-    request_url = f"{constant.GITHUB_BASE_URL}{repo}/contents/{filename}?ref={sha}"
+    request_url = f"{constant.GITHUB_API_BASE_URL}{repo}/contents/{filename}?ref={sha}"
     response = api_request(request_url,token) 
-    # path = ''
     try:
-        path = response['path']
-        return True
+        if response['path']:
+            return True
+        else:
+            return False
     except Exception as e:
         return False
 
@@ -227,6 +232,7 @@ def file_dir(name):
     
 
 def get_patch(file, storageDir, fileName):
+    # Not in use at the moment
     """
     get_patch(url, token)
     Send a request to the github api to find retrieve the patch of a commit and saves it to a .patch file
@@ -257,6 +263,7 @@ def save_file(file, storageDir, fileName):
         f.write(file)
         f.close()
 
+
 def get_file_type(file_path):
     '''
     Guess a file type based upon a file extension (mimetypes module)
@@ -286,6 +293,7 @@ def get_file_type(file_path):
     else:
         magic_ext = common.FileExt.Text
     return magic_ext 
+
 
 def get_first_last_commit(pr_commits):
     '''
@@ -318,4 +326,35 @@ def get_first_last_commit(pr_commits):
                         if commit_date > last_commit_date:
                             last_commit_date = commit_date
                             last_commit = commit
+    return first_commit, last_commit
+
+def get_first_last_commit(repo, pullrequest, token_list, ct):
+    '''
+    Retrieve the first and the last commit of a pull request
+    
+    Args:
+        pr_commits (String): List of commits in a pull request
+    Return:
+        The frist and last commit
+    '''
+    commits = []
+    page_number = 1
+    try:
+        while True:
+            url = f"{constant.GITHUB_API_BASE_URL}{repo}/pulls/{pullrequest}/commits?page={str(page_number)}&per_page=100"
+            page_number = page_number + 1
+
+            pullrequest_commits, ct = get_response(url, token_list, ct)
+
+            if pullrequest_commits is None:
+                break
+            for commit in pullrequest_commits:
+                commit_sha = commit['sha']
+                commits.append(commit_sha)
+    except GetOutOfLoop:
+        print("Stopping data extraction....")
+
+    first_commit = commits[0]
+    last_commit = commits[-1]
+
     return first_commit, last_commit
