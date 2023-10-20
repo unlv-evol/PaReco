@@ -1,6 +1,7 @@
 
 # GitHub constants
-GITHUB_BASE_URL = "https://api.github.com/repos/"
+GITHUB_API_BASE_URL = "https://api.github.com/repos/"
+GITHUB_BASE_URL = "https://github.com/"
 GITHUB_RAW_URL = "https://raw.githubusercontent.com/"
 
 # common.py
