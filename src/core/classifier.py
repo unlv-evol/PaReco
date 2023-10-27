@@ -10,7 +10,6 @@ def unified_diff(before, after):
     """
     unified_diff
     To create a unified diff file
-    
     @before - The state of the file before changes
     @after - The state of the file after the changes
     """
@@ -138,7 +137,7 @@ def get_file_after_patch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir,
         print("Could not save file after patch: ", e)
     return fileAfterPatchDir + fileName, fileAfterPatchUrl
 
-def get_file_from_dest(repo_dir, variant, sha, pair_nr,fileDir, fileName, token):
+def get_file_from_dest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName, token):
     destPath = f'{repo_dir}{str(pair_nr)}/{variant}/{fileDir}'
     
     if not os.path.exists(destPath):
