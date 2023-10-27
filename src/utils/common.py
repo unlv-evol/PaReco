@@ -128,20 +128,20 @@ http://www.partow.net/programming/hashfunctions/index.html
 
 
 def readPrs(pair_nr, source):
-    with open("Repos_prs/"+ str(pair_nr)+ '_' + source.split('/')[0] + '_' + source.split('/')[1] + '_prs.pkl', 'rb') as f:
+    with open(f"Repos_prs/{str(pair_nr)}_{source.split('/')[0]}_{source.split('/')[1]}_prs.pkl", 'rb') as f:
         prs = pickle.load(f)
     return prs
 
 def readResults(pair_nr, source):
-    with open("Repos_results/"+ str(pair_nr)+ '_' + source.split('/')[0] + '_' + source.split('/')[1] + '_results.pkl', 'rb') as f:
+    with open(f"Repos_results/{str(pair_nr)}_{source.split('/')[0]}_{source.split('/')[1]}_results.pkl", 'rb') as f:
         results = pickle.load(f)
     return results
     
 def readTotals(pair_nr, source):
-    with open("Repos_totals/"+ str(pair_nr)+ '_' + source.split('/')[0] + '_' + source.split('/')[1] + '_totals.pkl', 'rb') as f:
+    with open(f"Repos_totals/{str(pair_nr)}_{source.split('/')[0]}_{source.split('/')[1]}_totals.pkl", 'rb') as f:
         metrics = pickle.load(f)
     return metrics
 
 def pickleFile(file, data):
-    with open(file + '.pkl', 'wb') as f:
+    with open(f"{file}.pkl", 'wb') as f:
         pickle.dump(data, f)
