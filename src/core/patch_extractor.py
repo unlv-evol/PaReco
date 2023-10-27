@@ -1,3 +1,4 @@
+import time
 from dateutil import parser
 from constants import constant
 from utils import helpers
@@ -8,6 +9,7 @@ class GetOutOfLoop(Exception):
 
 
 def pullrequest_patches(repo, diverge_date, least_date, token_list, ct):
+    start = time.time()
     '''
     Get details of pull requests which part of patches 
 
@@ -35,7 +37,7 @@ def pullrequest_patches(repo, diverge_date, least_date, token_list, ct):
             page_number = page_number + 1
 
             issues_data, ct = helpers.get_response(url, token_list, ct)
-
+            
             if issues_data is not None:
                 print(url)
                 # end loop is you start getting empty data array
@@ -60,7 +62,9 @@ def pullrequest_patches(repo, diverge_date, least_date, token_list, ct):
                             continue
                             
                         if parser.parse(pull_merged_at) < parser.parse(diverge_date):
-                            
+                            end = time.time()
+                            runtime = end - start
+                            print("--- %s seconds ---" % runtime)
                             return pr, title, ct
                                                     
                         pr_all_merged.append(issue['number'])
@@ -75,5 +79,9 @@ def pullrequest_patches(repo, diverge_date, least_date, token_list, ct):
             
     except GetOutOfLoop:
         print("Stopping data extraction....")
-    
+        
+    end = time.time()
+    runtime = end - start
+    print("---%s seconds ---" % runtime)
+
     return pr, title, ct
