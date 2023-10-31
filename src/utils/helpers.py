@@ -286,6 +286,8 @@ def get_file_type(file_path):
         magic_ext = common.FileExt.C
     elif ext == 'java':
         magic_ext = common.FileExt.Java
+    elif ext == 'scala':
+        magic_ext = common.FileExt.Scala
     elif ext == 'sh':
         magic_ext = common.FileExt.ShellScript
     elif ext == 'pl':
@@ -300,39 +302,6 @@ def get_file_type(file_path):
         magic_ext = common.FileExt.Text
     return magic_ext 
 
-
-def get_first_last_commit(pr_commits):
-    '''
-    Retrieve the first and the last commit of a pull request
-    
-    Args:
-        pr_commits (String): List of commits in a pull request
-    Return:
-        The frist and last commit
-    '''
-    first_commit = {}
-    last_commit = {}
-    for files in pr_commits:
-        for p in files:
-            first_commit_date = ''
-            last_commit_date = ''
-            for commit in files[p]:
-                commit_date =commit['commit_date']
-                if first_commit_date == '':
-                    first_commit_date = commit_date
-                    first_commit = commit
-                else:
-                    if commit_date < first_commit_date:
-                        first_commit_date = commit_date
-                        first_commit = commit   
-                    if last_commit_date == '':
-                        last_commit_date = commit_date
-                        last_commit = commit
-                    else:
-                        if commit_date > last_commit_date:
-                            last_commit_date = commit_date
-                            last_commit = commit
-    return first_commit, last_commit
 
 def get_first_last_commit(repo, pullrequest, token_list, ct):
     '''
