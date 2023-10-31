@@ -2,6 +2,7 @@ import time
 from constants import constant
 from utils import helpers
 from datetime import datetime
+import pandas as pd
 
 
 def fetch_pullrequest_data(mainline, variant, pullrequests, variant_sha, token_list, ct):
@@ -9,6 +10,7 @@ def fetch_pullrequest_data(mainline, variant, pullrequests, variant_sha, token_l
     start = time.time()
     req = 0
     pullrequest_data = {}
+    missing_files = []
     token_length = len(token_list)
     
     for pullrequest in pullrequests:
@@ -71,8 +73,21 @@ def fetch_pullrequest_data(mainline, variant, pullrequests, variant_sha, token_l
                             sub['changes'] = file['changes']
                             sub['patch'] = file['patch']
                             commits_data[file_name].append(sub)
-                        # else:
+                        else:
                             # print(f"File missing in target_head.......: {file_name}, Status: {file['status']}")
+                            try:
+                                previous_name = file['previous_filename']
+                            except:
+                                previous_name = "null"
+                            missing = {
+                                'filename': file_name,
+                                'previous_name': previous_name,
+                                'status': file['status'],
+                                'additions': file['additions'],
+                                'deletions': file['deletions'],
+                                'changes': file['changes']
+                            }
+                            missing_files.append(missing)
                     ct += 1
             except Exception as e:
                 print(e)
@@ -80,6 +95,9 @@ def fetch_pullrequest_data(mainline, variant, pullrequests, variant_sha, token_l
             pullrequest_data[pullrequest]['commits_data'].append(commits_data)
         except Exception as e:
             print("Error while trying to fetch pull request data....: ", e)
+   
+    df = pd.DataFrame(missing_files)
+    df.to_csv('missing_files.csv')
 
     end = time.time()
     runtime = end - start
