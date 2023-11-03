@@ -42,8 +42,8 @@ nav:
     - Getting Started: getting_started.md
     - Reference:
           - 'Source Loader': 'reference/source_loader.md'
-          - 'Commit Loader': 'reference/commit_loader.md'
-          - 'Data Loader': 'reference/data_loader.md'
+          - 'Patch Loader': 'reference/patch_loader.md'
+          - 'Data Extractor': 'reference/data_extractor.md'
           - 'Patch Extractor': 'reference/patch_extractor.md'
           - 'Classifier': 'reference/classifier.md'
           - 'Common': 'reference/common.md'

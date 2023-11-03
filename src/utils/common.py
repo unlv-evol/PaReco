@@ -38,6 +38,7 @@ class FileExt:
     Perl        = 6
     PHP         = 7
     Ruby        = 8
+    Scala       = 9
 
 # html escape chracters
 html_escape_dict = { '&': '&amp;', '>': '&gt;', '<': '&lt;', '"': '&quot;', '\'': '&apos;' }
@@ -112,7 +113,7 @@ def sdbm_hash(string):
     Args:
         string (String): the string to be hashed
     Return:
-        hash (String): hash value
+        hash (String): hash value2
     '''
     hash = 0
     for c in string:
@@ -128,20 +129,20 @@ http://www.partow.net/programming/hashfunctions/index.html
 
 
 def readPrs(pair_nr, source):
-    with open("Repos_prs/"+ str(pair_nr)+ '_' + source.split('/')[0] + '_' + source.split('/')[1] + '_prs.pkl', 'rb') as f:
+    with open(f"Repos_prs/{str(pair_nr)}_{source.split('/')[0]}_{source.split('/')[1]}_prs.pkl", 'rb') as f:
         prs = pickle.load(f)
     return prs
 
 def readResults(pair_nr, source):
-    with open("Repos_results/"+ str(pair_nr)+ '_' + source.split('/')[0] + '_' + source.split('/')[1] + '_results.pkl', 'rb') as f:
+    with open(f"Repos_results/{str(pair_nr)}_{source.split('/')[0]}_{source.split('/')[1]}_results.pkl", 'rb') as f:
         results = pickle.load(f)
     return results
     
 def readTotals(pair_nr, source):
-    with open("Repos_totals/"+ str(pair_nr)+ '_' + source.split('/')[0] + '_' + source.split('/')[1] + '_totals.pkl', 'rb') as f:
+    with open(f"Repos_totals/{str(pair_nr)}_{source.split('/')[0]}_{source.split('/')[1]}_totals.pkl", 'rb') as f:
         metrics = pickle.load(f)
     return metrics
 
 def pickleFile(file, data):
-    with open(file + '.pkl', 'wb') as f:
+    with open(f"{file}.pkl", 'wb') as f:
         pickle.dump(data, f)

@@ -1,28 +1,15 @@
-import os
-import requests
-import csv
-import json
-import sys
-import re
-import time
-from collections import defaultdict
-
-import pickle
 import difflib
-from pprint import pprint
-
-from utils import common
+import os
 from constants import constant
-import patchLoader as patchloader
-import sourceLoader as sourceloader
-import commitLoader as commitloader
+from utils import helpers
+from . import patch_loader as patchloader
+from . import source_loader as sourceloader
 
 
 def unified_diff(before, after):
     """
     unified_diff
     To create a unified diff file
-    
     @before - The state of the file before changes
     @after - The state of the file after the changes
     """
@@ -50,30 +37,36 @@ def save_patch(storageDir, fileName, file, dup_count):
     patch_path = ''
     if not os.path.exists(storageDir):
         os.makedirs(storageDir)
-        patch_path = storageDir + fileName + '.patch'
-        f = open(patch_path, 'x')
-        for line in file[2:]:
-            f.write(line)
-        f.close()
+        patch_path = f'{storageDir}{fileName}.patch'
+        with open(patch_path, 'x') as patch:
+            patch.writelines(file)
+        # f = open(patch_path, 'x')
+        # for line in file[2:]:
+        #     f.write(line)
+        # f.close()
         
     else:
-        if not os.path.isfile(storageDir + fileName):
-            patch_path = storageDir + fileName + '.patch'
-            f = open(patch_path, 'w')
-            for line in file[2:]:
-                f.write(line)
-            f.close()
+        if not os.path.isfile(f'{storageDir}{fileName}'):
+            patch_path = f'{storageDir}{fileName}.patch'
+            with open(patch_path, 'x') as patch:
+                patch.writelines(file)
+            # f = open(patch_path, 'w')
+            # for line in file[2:]:
+            #     f.write(line)
+            # f.close()
         else:
-            patch_path = storageDir + fileName+ '_' + dup_count + '.patch'
-            f = open(patch_path, 'w')
-            for line in file[2:]:
-                f.write(line)
-            f.close()
+            patch_path = f'{storageDir}{fileName}_{dup_count}.patch'
+            with open(patch_path, 'x') as patch:
+                patch.writelines(file)
+            # f = open(patch_path, 'w')
+            # for line in file[2:]:
+            #     f.write(line)
+            # f.close()
             dup_count += 1
     return patch_path, dup_count
         
 
-def processPatch(patchPath, dstPath, typePatch):
+def process_patch(patch_path, dst_path, type_patch):
     """
     processPatch
     To process a patch
@@ -85,26 +78,18 @@ def processPatch(patchPath, dstPath, typePatch):
     """
                     
     patch = patchloader.PatchLoader()
-    npatch = patch.traverse(patchPath, typePatch)
+    try:
+        patch.traverse(patch_path, type_patch)
+    except Exception as e:
+        print("Error traversing patch:....", e)
     
     source = sourceloader.SourceLoader()
-    nmatch = source.traverse(dstPath, patch)
+    try:
+        source.traverse(dst_path, patch)
+    except Exception as e:
+        print("Error traversing source (variant)....", e)
     
     return patch, source
-
-
-def apiRequest(url, token):
-    """
-    apiRequest
-    To make api requests to the GitHub API
-    
-    @url - the url for the API
-    @token - GitHub API token
-    """
-
-    header = {'Authorization': 'token %s' % token}
-    response = requests.get(url, headers=header)
-    return response
 
 def get_ext(file):
     """
@@ -116,14 +101,14 @@ def get_ext(file):
     ext = file.split['.'][-1]
 
 
-def getFileBeforePatch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file, fileDir, fileName, token):
+def get_file_before_patch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir, fileName, token):
     """
     getFileBeforePatch
     Extracts the buggy file using the GitHub API
     
     @repo_dir - directory where to store the file
     @mainline - the source repository
-    @sha - the commit sha-value that last changed the file
+    @sha - the commit sha-value that last changed the file == before pull request was created
     @parent - the parent commit sha-value of the commit that last changed the file
     @pr_nr - the pull request number of the patch
     @file - the file path in the repository
@@ -131,20 +116,28 @@ def getFileBeforePatch(repo_dir, mainline, sha, parent, pair_nr, pr_nr, file, fi
     @fileName - a name to store the file
     @token - token needed for the GitHub API
     """
-    fileBeforePatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/{sha}/before_patch/{fileDir}'
-    beforePatch_url = f'{constant.GITHUB_RAW_URL}{mainline}/{parent}/{file}'
-    fileBeforePatch = apiRequest(beforePatch_url, token)
-    beforePatch = commitloader.saveFile(fileBeforePatch.content, fileBeforePatchDir, fileName)
+    fileBeforePatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/before_patch/{fileDir}'
+    beforePatch_url = f'{constant.GITHUB_RAW_URL}{mainline}/{sha}/{file}'
+    fileBeforePatch = helpers.api_request(beforePatch_url, token)
+
+    try:
+        helpers.save_file(fileBeforePatch.content, fileBeforePatchDir, fileName)
+    except Exception as e:
+        print("Could not save file before patch: ", e)
     return fileBeforePatchDir + fileName, beforePatch_url
 
-def getFileAfterPatch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir, fileName, token):
-    fileAfterPatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/{sha}/after_patch/{fileDir}'
+def get_file_after_patch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir, fileName, token):
+    fileAfterPatchDir = f'{repo_dir}{str(pair_nr)}/{mainline}/{str(pr_nr)}/after_patch/{fileDir}'
     fileAfterPatchUrl = f'{constant.GITHUB_RAW_URL}{mainline}/{sha}/{file}'
-    fileAfterPatch = apiRequest(fileAfterPatchUrl, token)
-    afterPatch = commitloader.saveFile(fileAfterPatch.content, fileAfterPatchDir, fileName)
+    fileAfterPatch = helpers.api_request(fileAfterPatchUrl, token)
+
+    try:
+        helpers.save_file(fileAfterPatch.content, fileAfterPatchDir, fileName)
+    except Exception as e:
+        print("Could not save file after patch: ", e)
     return fileAfterPatchDir + fileName, fileAfterPatchUrl
 
-def getFileFromDest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName, token):
+def get_file_from_dest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName, token):
     destPath = f'{repo_dir}{str(pair_nr)}/{variant}/{fileDir}'
     
     if not os.path.exists(destPath):
@@ -152,11 +145,16 @@ def getFileFromDest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName, to
 
     dest_url = f'{constant.GITHUB_RAW_URL}{variant}/{sha}/{fileDir}{fileName}'
 
-    destFile = apiRequest(dest_url, token)
-    upstream = commitloader.saveFile(destFile.content, destPath, fileName)
+    destFile = helpers.api_request(dest_url, token)
+    
+    try:
+        helpers.save_file(destFile.content, destPath, fileName)
+    except Exception as e:
+        print("Could not save file from upstream")
     return destPath + fileName, dest_url
     
-def calcMatchPercentage(results, hashes):
+def calc_match_percentage(results, hashes):
+    # Not called anywhere at the moment
     matched_code = []
     not_matched = []
     total = 0
@@ -176,6 +174,7 @@ def calcMatchPercentage(results, hashes):
 
 
 def find_hunk_matches(match_items, _type, important_hashes, source_hashes):
+    # Not called anywhere at the moment
     """
     find_hunk_matches
     To find the different matches between two hunk using the hashed values
@@ -383,34 +382,3 @@ def find_hunk_matches_w_important_hash(match_items, _type, important_hashes, sou
         seq_matches[i]['class']= _class 
         
     return seq_matches 
-
-def getFirstLastCommit(pr_commits):
-    """
-    getFirstLastCommit
-    Retrieve the first and the last commit of a pull request
-    
-    @pr_commits
-    """
-    first_commit = {}
-    last_commit = {}
-    for files in pr_commits:
-        for p in files:
-            first_commit_date = ''
-            last_commit_date = ''
-            for commit in files[p]:
-                commit_date =commit['commit_date']
-                if first_commit_date == '':
-                    first_commit_date = commit_date
-                    first_commit = commit
-                else:
-                    if commit_date < first_commit_date:
-                        first_commit_date = commit_date
-                        first_commit = commit   
-                    if last_commit_date == '':
-                        last_commit_date = commit_date
-                        last_commit = commit
-                    else:
-                        if commit_date > last_commit_date:
-                            last_commit_date = commit_date
-                            last_commit = commit
-    return first_commit, last_commit
