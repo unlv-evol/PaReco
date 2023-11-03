@@ -113,7 +113,7 @@ def sdbm_hash(string):
     Args:
         string (String): the string to be hashed
     Return:
-        hash (String): hash value
+        hash (String): hash value2
     '''
     hash = 0
     for c in string:

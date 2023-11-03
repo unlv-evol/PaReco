@@ -82,6 +82,7 @@ def fetch_pullrequest_data(mainline, variant, pullrequests, variant_sha, token_l
                             missing = {
                                 'filename': file_name,
                                 'previous_name': previous_name,
+                                'pullrequest_id': pullrequest,
                                 'status': file['status'],
                                 'additions': file['additions'],
                                 'deletions': file['deletions'],
