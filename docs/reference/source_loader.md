@@ -1,6 +1,6 @@
 # Source Loader 
 
-::: src.core.sourceLoader
+::: src.core.source_loader
     handler: python
     options:
       show_root_heading: false

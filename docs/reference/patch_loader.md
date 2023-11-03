@@ -1,6 +1,6 @@
 # Patch Loader
 
-::: src.core.patchLoader
+::: src.core.patch_loader
     handler: python
     options:
       show_root_heading: false
