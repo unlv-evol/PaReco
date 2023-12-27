@@ -38,7 +38,6 @@ class FileExt:
     Perl        = 6
     PHP         = 7
     Ruby        = 8
-    Scala       = 9
 
 # html escape chracters
 html_escape_dict = { '&': '&amp;', '>': '&gt;', '<': '&lt;', '"': '&quot;', '\'': '&apos;' }

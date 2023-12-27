@@ -81,7 +81,7 @@ class SourceLoader(object):
         Normalize a source file
         '''
         # Language-specific optimization
-        if ext==common.FileExt.C or ext==common.FileExt.Java or ext==common.FileExt.Scala:
+        if ext==common.FileExt.C or ext==common.FileExt.Java:
             norm_lines = []
             for c in common.c_regex.finditer(source):
                 if c.group('noncomment'):
@@ -211,8 +211,6 @@ class SourceLoader(object):
             magic_ext = common.FileExt.C
         elif sub_type == 'x-java':
             magic_ext = common.FileExt.Java
-        elif sub_type == 'x-scala':
-            magic_ext = common.FileExt.Scala
         elif sub_type == 'x-shellscript':
             magic_ext = common.FileExt.ShellScript
         elif sub_type == 'x-perl':

@@ -3,6 +3,8 @@ import requests
 import json
 import sys
 import os
+from time import time
+from functools import wraps
 from dateutil import parser
 from datetime import datetime, timedelta
 from constants import constant
@@ -63,14 +65,14 @@ def api_request(url, token):
 
 def repo_commit_date(repo, date, token_list, ct):
     # start a day before the last commit date
-    start_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ") - timedelta(days=1)
-    url = f'{constant.GITHUB_API_BASE_URL}{repo}/commits?since={start_date}'
+    # start_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ") - timedelta(days=1)
+    url = f'{constant.GITHUB_API_BASE_URL}{repo}/commits?until={date}'
+    sha = ''
     try:
         content_arrays, ct = get_response(url, token_list, ct)
-        sha = ''
         sha = content_arrays[0]['sha']
     except Exception as e:
-        print(e)
+        print(e, content_arrays)
         print("Error in func: [repo_commit_date]...")
     # commit_date = content_arrays[0]['commit']['committer']['date']
     return sha, ct
@@ -123,15 +125,20 @@ def divergence_date(mainline, variant, token_list, ct, least_date='', diverge_da
     url_ml = f'{constant.GITHUB_API_BASE_URL}{mainline}/compare/{sha_ml}...{fork1[0]}:{sha_vr}'
     try:
         content_arrays_ml, ct = get_response(url_ml, token_list, ct)
-        commits = content_arrays_ml['commits'][0]
-        if diverge_date == '':
-            diverge_date = commits['commit']['committer']['date']
+        if 'commits' in content_arrays_ml:
+            commits = content_arrays_ml['commits'][0]
+            if diverge_date == '':
+                diverge_date = commits['commit']['committer']['date']
+        else:
+            if diverge_date == '':
+                diverge_date = fork_date
+
         ahead = content_arrays_ml['ahead_by']
         behind = content_arrays_ml['behind_by']
 
-    except:
+    except Exception as e:
         print(f'{constant.GITHUB_API_BASE_URL}{mainline}/compare/{sha_ml}...{fork1[0]}:{sha_vr}')
-        print("Error in func: [divergence_date]...")
+        print("Error in func: [divergence_date]...: ", e)
 
     return fork_date, diverge_date, least_date, ahead, behind, ct
 
@@ -156,34 +163,6 @@ def get_commits_ahead(mainline, fork, compare_token):
     json_commits = api_request(compare_url, compare_token)
 
     return json_commits["commits"]
-
-
-def get_commit_files(commit, commit_token):
-    """Get the files for each commit
-
-    Args:
-        commit (String): the commits for which files need to be retrieved
-        getCommitToken (String): the token used for the qpi request to get the commit
-    
-    commitFilesDict={
-        "sha": {
-            "commitUrl": url
-            "files": list(file 1, file 2, ... , file n)
-        }
-        
-    }
-    """ 
-    commitFilesDict = {}
-    sha = commit["sha"]
-    commitUrl = commit['url']
-
-    commitFilesDict[sha] = {}
-    commitFilesDict[sha]["commitUrl"] = commitUrl
-    commitFilesDict[sha]["files"] = list()
-
-    commit = api_request(f'{commitUrl}?access_token={commit_token}')
-
-    return commit
 
 
 def find_file(filename, repo, token, sha):
@@ -286,8 +265,6 @@ def get_file_type(file_path):
         magic_ext = common.FileExt.C
     elif ext == 'java':
         magic_ext = common.FileExt.Java
-    elif ext == 'scala':
-        magic_ext = common.FileExt.Scala
     elif ext == 'sh':
         magic_ext = common.FileExt.ShellScript
     elif ext == 'pl':
@@ -333,3 +310,15 @@ def get_first_last_commit(repo, pullrequest, token_list, ct):
     last_commit = commits[-1]
 
     return first_commit, last_commit
+
+
+def timing(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        ts = time()
+        result = f(*args, **kwargs)
+        te = time()
+        print('func:%r args:[%r, %r] took: %2.4f sec' % (f.__name__, args, kwargs, te - ts))
+        return result
+
+    return wrap
