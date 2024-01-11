@@ -2,6 +2,9 @@
 tokens.txt
 src/notebooks/Repos_files
 src/notebooks/Repos_results
+src/devchatgpt/notebooks/Repos_files
+src/devchatgpt/notebooks/Repos_results
+src/devchatgpt/data
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
