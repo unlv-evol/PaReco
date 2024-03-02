@@ -2,6 +2,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
+def all_class_bar(height, pr_nr, mainline, variant, plotting=False):
+    """
+        Bar Chart
+    """
+    left = [1, 2, 3, 4, 5]
+    x_label = ['PA', 'CC', 'NE', 'PN', 'ERROR']
+
+
+    plt.figure(figsize=(15,10), dpi=80)
+    plt.bar(left, height, tick_label = x_label, width = 0.8, color = ["#377eb8","#984ea3", "#ff7f00", "#e41a1c", "#a65628"])
+
+    patch1 = mpatches.Patch(color='#377eb8', label='Patch Applied')
+    patch2 = mpatches.Patch(color='#984ea3', label='Cannot Classify')
+    patch3 = mpatches.Patch(color='#ff7f00', label='Not Existing Patch')
+    patch4 = mpatches.Patch(color='#e41a1c', label='Patch Not Applied')
+    patch5 = mpatches.Patch(color='#a65628', label='Error')
+   
+    plt.legend(fontsize=18, loc="upper left" ,handles = [patch1, patch2, patch3, patch4, patch5])
+    
+    plt.xlabel('Classifications', fontsize=20)
+    plt.xticks(fontsize = 14)   
+    plt.yticks(fontsize = 14) 
+    
+    plt.ylabel('Frequency', fontsize=20)
+#     plt.savefig("Plots/"+str(pr_nr) + "_All_classes_bar"+".png", format="PNG",  dpi=80, bbox_inches='tight')
+    if plotting:
+        plt.show()
+        
 def create_pie(slices, plt):
     labels= ['MO', 'ED', 'SP', 'AF', 'DF']
     
@@ -84,36 +112,6 @@ def create_all_pie(data, repo_nr):
     plt.savefig("Plots/"+str(repo_nr)+"_All_Pies.png", format="PNG")
     plt.show()
     
-def all_class_bar(height, pr_nr, mainline, variant, plotting=False):
-    """
-        Bar Chart
-    """
-    left = [1, 2, 3, 4, 5, 6, 7]
-    x_label = ['MO', 'ED', 'Split(MO/ED)', 'CC', 'NE', 'NA', 'ERROR']
-
-
-    plt.figure(figsize=(15,10), dpi=80)
-    plt.bar(left, height, tick_label = x_label, width = 0.8, color = ["#e41a1c","#377eb8","#4daf4a","#984ea3", "#ff7f00", "#ffff33", "#a65628"])
-
-    patch1 = mpatches.Patch(color='#e41a1c', label='Missed Opportunity')
-    patch2 = mpatches.Patch(color='#377eb8', label='Effort Duplication')
-    patch3 = mpatches.Patch(color='#4daf4a', label='Split(MO/ED)')
-    patch4 = mpatches.Patch(color='#984ea3', label='Cannot Classify')
-    patch5 = mpatches.Patch(color='#ff7f00', label='Not Existing Files')
-    patch6 = mpatches.Patch(color='#ffff33', label='Not Applicable')
-    patch7 = mpatches.Patch(color='#a65628', label='Error')
-   
-    plt.legend(fontsize=18, loc="upper left" ,handles = [patch1, patch2, patch3, patch4, patch5, patch6, patch7])
-    
-    plt.xlabel('Classifications', fontsize=20)
-    plt.xticks(fontsize = 14)   
-    plt.yticks(fontsize = 14) 
-    
-    plt.ylabel('Frequency', fontsize=20)
-#     plt.savefig("Plots/"+str(pr_nr) + "_All_classes_bar"+".png", format="PNG",  dpi=80, bbox_inches='tight')
-    if plotting:
-        plt.show()
-    
 def all_class_bar_w_even_d(height, pr_nr, mainline, variant):
     """
         Bar Chart
@@ -149,16 +147,16 @@ def all_class_pie(slices, pr_nr, mainline, variant, plotting = False):
     """
         Pie Chart
     """
-    x_label = ['Missed Opportunity', 'Effort Duplication', 'Split', 'Cannot Classify', 'Not Existing Files', 'Not Applicable', 'Error']
-    colors = ["#e41a1c","#377eb8","#4daf4a","#984ea3", "#ff7f00", "#ffff33", "#a65628"]
+    x_label = ['Effort Duplication', 'Cannot Classify', 'Not Existing Files', 'Not Applicable', 'Error']
+    colors = ["#377eb8","#984ea3", "#ff7f00", "#ffff33", "#a65628"]
 
     plt.pie(slices, labels = x_label, colors=colors, 
-            startangle=0, shadow = True, explode = (0, 0, 0, 0, 0, 0, 0),
+            startangle=0, shadow = True, explode = (0, 0, 0, 0, 0),
             radius = 3, autopct = '%1.1f%%')
     plt.rc('font', size=18)
     plt.rc('legend', fontsize=14)
 
     plt.legend(loc='center left', bbox_to_anchor=(2,1.5))
-    plt.savefig("Plots/"+str(pr_nr)+"_All_classes_pie.png", format="PNG", dpi=80, bbox_inches='tight')
+    # plt.savefig("Plots/"+str(pr_nr)+"_All_classes_pie.png", format="PNG", dpi=80, bbox_inches='tight')
     if plotting:
         plt.show()

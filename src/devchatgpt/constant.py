@@ -6,7 +6,7 @@ GITHUB_RAW_URL = "https://raw.githubusercontent.com/"
 
 # common.py
 # global variables
-NGRAM_SIZE   = 4
+NGRAM_SIZE   = 1
 CONTEXT_LINE = 10
 VERBOSE_MODE = False
 MAGIC_COOKIE = None
@@ -15,6 +15,7 @@ MIN_MN_RATIO = 32
 
 EXTENSIONS = {
     "javascript":   "js",
+    "js":           "js",
     "bash":         "sh",
     "shell":        "sh",
     "markdown":     "md",
@@ -37,11 +38,16 @@ EXTENSIONS = {
     "json":         "json",
     "ruby":         "rb",
     "yaml":         "yaml",
+    "yml":          "yaml",
     "liquid":       "liquid",
     "gradle":       "gradle",
     "ipynb":        "ipynb",
     "csharp":       "cs",
     "sh":           "sh",
     "elixir":       "exs",
-    "jsx":          "jsx"
+    "jsx":          "jsx",
+    "fsharp":       "fs",
+    "regex":        "regex",
+    "svelte":       "js",
+    "nginx":        "conf"
 }

@@ -6,9 +6,8 @@
 import os
 import re
 import time
-import mimetypes
-from utils import common
-from html.parser import HTMLParser
+import common
+import helpers
 
 class PatchLoader(object):
 
@@ -18,61 +17,62 @@ class PatchLoader(object):
         self._hashes = {}
         self._only_removed = []
         self._only_added = []
-        
-    def traverse(self, patch_path, typePatch):
-        '''
-        Traverse patch files
 
-        Args:
-            patch_path: path to the patch 
-            typePatch: type of the patch
-        
-        Return:
-            _npatch (int): number of patch
+    def traverse(self, patch_path, typePatch, fileExt):
+        '''
+            Traverse patch files
         '''
 #         common.verbose_print('[+] traversing patch files')
         start_time = time.time()
 
+        file_type = fileExt
         if os.path.isfile(patch_path):
-            magic_type = common.file_type(patch_path)
-#             common.verbose_print('  [-] %s: %s' % (patch_path, magic_type))
-            if magic_type.startswith('text'):
-                main_type, sub_type = magic_type.split('/')
+            # file_type = common.file_type(patch_path)
+            common.verbose_print('  [-] %s: %s' % (patch_path, file_type))
+            # print('file_type: ', file_type)
+            if file_type in range(2, 35):
+                # print('here')
+                # main_type, sub_type = file_type.split('/')
                 if typePatch == 'buggy':
-                    self._process_buggy(patch_path)
+                    self._process_buggy(patch_path, file_type)
                 elif typePatch == 'patch':
-                    self._process_patch(patch_path)
+                    self._process_patch(patch_path, file_type)
         elif os.path.isdir(patch_path):
-            for root,dirs,files in os.walk(patch_path):
+            for root, dirs, files in os.walk(patch_path):
                 for file in files:
                     file_path = os.path.join(root, file)
-                    magic_type = common.file_type(file_path)
-#                     common.verbose_print('  [-] %s: %s' % (file_path, magic_type))
-                    if magic_type.startswith('text'):
-                        main_type, sub_type = magic_type.split('/')
+                    # file_type = common.file_type(file_path)
+                    common.verbose_print('  [-] %s: %s' % (file_path, file_type))
+                    if file_type in range(2, 35):
+
+                        # main_type, sub_type = file_type.split('/')
                         if typePatch == 'buggy':
-                            self._process_buggy(file_path)
+                            self._process_buggy(file_path, file_type)
+                            self.important_hashes = []
                         elif typePatch == 'patch':
-                            self._process_patch(file_path)
+                            self._process_patch(file_path, file_type)
         self._npatch = len(self._patch_list)
 
+
+
+
         elapsed_time = time.time() - start_time
-#         print ('[+] %d patches ... %.1fs\n' % (self._npatch, elapsed_time))
+        # print ('[+] %d patches ... %.1fs\n' % (self._npatch, elapsed_time))
         return self._npatch
 
-    def _process_buggy(self, patch_path):
+    def _process_buggy(self, patch_path, file_type):
         '''
-        Normalize a patch file and build a hash list
-
-        Args:
-            patch_path (String): path to the patch
+            Normalize a patch file and build a hash list
         '''
         patch_filename = patch_path.split('/')[-1]
         patch_file = open(patch_path, 'r')
         patch_lines = patch_file.readlines()
         patch_file.close()
-        magic_ext = None
+
+        # print(f'lines in patch: \n {patch_lines}')
+        # magic_ext = None
         process_flag = False
+
         diff_file = ''
         diff_cnt = 0
         diff_buggy_lines = []
@@ -83,34 +83,34 @@ class PatchLoader(object):
         
         for line in patch_lines:
             diff_file = re.sub('\.patch$', '', patch_path)
-            magic_ext = self._get_file_type(diff_file)
+            # magic_ext = self._get_file_type(diff_file)
             if line.startswith('@@'):     
                 if diff_buggy_lines:
 #                     common.verbose_print('\nDiff buggy lines')
 #                     common.verbose_print(diff_buggy_lines)
-                    diff_norm_lines = self._normalize(''.join(diff_buggy_lines), magic_ext).split()
+                    diff_norm_lines = self._normalize(''.join(diff_buggy_lines), file_type).split()
 #                     common.verbose_print('\nBuggy norm lines')
 #                     common.verbose_print(diff_norm_lines)
                     if len(diff_norm_lines) >= common.ngram_size:
 #                         common.verbose_print('      %s %d (ext: %d)' % (diff_file, diff_cnt, magic_ext))
                         path = '[%s] %s #%d' % (patch_filename, diff_file, diff_cnt)
-                        hash_list = self._build_hash_list(diff_norm_lines)
+                        hash_list, patch_hashes = self._build_hash_list(diff_norm_lines)
 #                         common.verbose_print('\nHash list\n', hash_list, '\n')
-                        self._patch_list.append(common.PatchInfo(path, magic_ext, ''.join(diff_orig_lines), diff_norm_lines, hash_list))
+                        self._patch_list.append(common.PatchInfo(path, file_type, ''.join(diff_orig_lines), diff_norm_lines, hash_list, patch_hashes, common.ngram_size))
                     else:
 #                         common.verbose_print('Adjusting ngram_size')
                         common.ngram_size = len(diff_norm_lines)
 #                         common.verbose_print('      %s %d (ext: %d)' % (diff_file, diff_cnt, magic_ext))
                         path = '[%s] %s #%d' % (patch_filename, diff_file, diff_cnt)
-                        hash_list = self._build_hash_list(diff_norm_lines)
+                        hash_list, patch_hashes = self._build_hash_list(diff_norm_lines)
 #                         common.verbose_print('\nHash list\n', hash_list, '\n')
-                        self._patch_list.append(common.PatchInfo(path, magic_ext, ''.join(diff_orig_lines), diff_norm_lines, hash_list))
+                        self._patch_list.append(common.PatchInfo(path, file_type, ''.join(diff_orig_lines), diff_norm_lines, hash_list, patch_hashes, common.ngram_size))
                     del diff_buggy_lines[:]
                     del orig_norm_lines[:]
                 if removed_lines:
                     removed_norm_lines = []
                     for removed in removed_lines:
-                        removed_norm_lines.append(self._normalize(''.join(removed), magic_ext).split())
+                        removed_norm_lines.append(self._normalize(''.join(removed), file_type).split())
 #                         hash1_r = common.fnv1a_hash(ngram) & (common.bloomfilter_size-1)
 #                         hash2_r = common.djb2_hash(ngram) & (common.bloomfilter_size-1)
 #                         hash3_r = common.sdbm_hash(ngram) & (common.bloomfilter_size-1)
@@ -134,45 +134,42 @@ class PatchLoader(object):
 #         common.verbose_print('\nDiff buggy lines')
 #         common.verbose_print(diff_buggy_lines)
         if diff_buggy_lines:
-            buggy_norm_lines = self._normalize(''.join(diff_buggy_lines), magic_ext).split()
+            buggy_norm_lines = self._normalize(''.join(diff_buggy_lines), file_type).split()
 #             common.verbose_print('\nBuggy norm lines')
 #             common.verbose_print(buggy_norm_lines)
             if len(buggy_norm_lines) >= common.ngram_size:
 #                 common.verbose_print('      %s %d (ext: %d)' % (diff_file, diff_cnt, magic_ext))
                 path = '[%s] %s #%d' % (patch_filename, diff_file, diff_cnt)
-                hash_list = self._build_hash_list(buggy_norm_lines)
+                hash_list, patch_hashes = self._build_hash_list(buggy_norm_lines)
 #                 common.verbose_print('\nHash list\n', hash_list, '\n')
-                self._patch_list.append(common.PatchInfo(path, magic_ext, ''.join(diff_buggy_lines), buggy_norm_lines, hash_list))
+                self._patch_list.append(common.PatchInfo(path, file_type, ''.join(diff_buggy_lines), buggy_norm_lines, hash_list, patch_hashes, common.ngram_size))
             else:
 #                 print('Adjusting ngram_size')
                 path = '[%s] %s #%d' % (patch_filename, diff_file, diff_cnt)
                 common.ngram_size = len(buggy_norm_lines)
-                hash_list = self._build_hash_list(buggy_norm_lines)
+                hash_list, patch_hashes = self._build_hash_list(buggy_norm_lines)
 #                 print('\nHash list\n', hash_list, '\n')
-                self._patch_list.append(common.PatchInfo(path, magic_ext, ''.join(diff_buggy_lines), buggy_norm_lines, hash_list))
+                self._patch_list.append(common.PatchInfo(path, file_type, ''.join(diff_buggy_lines), buggy_norm_lines, hash_list, patch_hashes, common.ngram_size))
             if removed_lines:
                 removed_norm_lines = []
                 for removed in removed_lines:
-                    removed_norm_lines.append(self._normalize(''.join(removed), magic_ext).split())
+                    removed_norm_lines.append(self._normalize(''.join(removed), file_type).split())
 #                     hash1_r = common.fnv1a_hash(ngram) & (common.bloomfilter_size-1)
 #                     hash2_r = common.djb2_hash(ngram) & (common.bloomfilter_size-1)
 #                     hash3_r = common.sdbm_hash(ngram) & (common.bloomfilter_size-1)
 #                     hash_list_removed = [hash1_r, hash2_r, hash3_r]
                     self._only_removed.append(removed_norm_lines)
-                    
-    def _process_patch(self, patch_path):
+
+    def _process_patch(self, patch_path, file_type):
         '''
         Normalize a patch file and build a hash list
-        
-        Args:
-            patch_path (String): path to the patch
         '''
         patch_filename = patch_path.split('/')[-1]
         patch_file = open(patch_path, 'r')
         patch_lines = patch_file.readlines()
         patch_file.close()
         
-        magic_ext = None
+        # magic_ext = None
         process_flag = False
         diff_file = ''
         diff_cnt = 0
@@ -184,36 +181,36 @@ class PatchLoader(object):
         
         for line in patch_lines:
             diff_file = re.sub('\.patch$', '', patch_path)
-            magic_ext = self._get_file_type(diff_file)
+            # magic_ext = self._get_file_type(diff_file)
             if line.startswith('@@'):
                 if diff_patch_lines:
 #                     common.verbose_print('\nDiff patch lines')
 #                     common.verbose_print(diff_patch_lines)
-                    diff_norm_lines = self._normalize(''.join(diff_patch_lines), magic_ext).split()
+                    diff_norm_lines = self._normalize(''.join(diff_patch_lines), file_type).split()
 #                     common.verbose_print('\nDiff norm lines')
 #                     common.verbose_print(diff_norm_lines)
                     if len(diff_norm_lines) >= common.ngram_size:
-                        common.verbose_print('      %s %d (ext: %d)' % (diff_file, diff_cnt, magic_ext))
+                        common.verbose_print('      %s %d (ext: %d)' % (diff_file, diff_cnt, file_type))
                         path = '[%s] %s #%d' % (patch_filename, diff_file, diff_cnt)
-                        hash_list = self._build_hash_list(diff_norm_lines)
+                        hash_list, patch_hashes = self._build_hash_list(diff_norm_lines)
 #                         common.verbose_print('hash list')
 #                         common.verbose_print(hash_list)
-                        self._patch_list.append(common.PatchInfo(path, magic_ext, ''.join(diff_orig_lines), diff_norm_lines, hash_list))
+                        self._patch_list.append(common.PatchInfo(path, file_type, ''.join(diff_orig_lines), diff_norm_lines, hash_list, patch_hashes, common.ngram_size))
                     else:
 #                         common.verbose_print('Adjusting ngram_size')
                         common.ngram_size = len(diff_norm_lines)
 #                         common.verbose_print('      %s %d (ext: %d)' % (diff_file, diff_cnt, magic_ext))
                         path = '[%s] %s #%d' % (patch_filename, diff_file, diff_cnt)
-                        hash_list = self._build_hash_list(diff_norm_lines)
+                        hash_list, patch_hashes = self._build_hash_list(diff_norm_lines)
 #                         common.verbose_print('hash list')
 #                         common.verbose_print(hash_list)
-                        self._patch_list.append(common.PatchInfo(path, magic_ext, ''.join(diff_orig_lines), diff_norm_lines, hash_list))
+                        self._patch_list.append(common.PatchInfo(path, file_type, ''.join(diff_orig_lines), diff_norm_lines, hash_list, patch_hashes, common.ngram_size))
                     del diff_patch_lines[:]                   
                     del orig_norm_lines[:]
                 if added_lines:
                     added_norm_lines = []
                     for added in added_lines:
-                        added_norm_lines.append(self._normalize(''.join(added), magic_ext).split())
+                        added_norm_lines.append(self._normalize(''.join(added), file_type).split())
 #                         hash1_a = common.fnv1a_hash(ngram) & (common.bloomfilter_size-1)
 #                         hash2_a = common.djb2_hash(ngram) & (common.bloomfilter_size-1)
 #                         hash3_a = common.sdbm_hash(ngram) & (common.bloomfilter_size-1)
@@ -234,86 +231,77 @@ class PatchLoader(object):
                 diff_patch_lines.append(line[1:])
                 diff_orig_lines.append(line.replace('<','&lt;').replace('>','&gt;'))
 
-#         print('\nDiff patch lines')
-#         print(diff_patch_lines)
         if diff_patch_lines:
-            diff_norm_lines = self._normalize(''.join(diff_patch_lines), magic_ext).split()
+            diff_norm_lines = self._normalize(''.join(diff_patch_lines), file_type).split()
 #             common.verbose_print('\nDiff norm lines')
 #             common.verbose_print(diff_norm_lines)
             if len(diff_norm_lines) >= common.ngram_size:
 #                 common.verbose_print('      %s %d (ext: %d)' % (diff_file, diff_cnt, magic_ext))
                 path = '[%s] %s #%d' % (patch_filename, diff_file, diff_cnt)
-                hash_list = self._build_hash_list(diff_norm_lines)
+                hash_list, patch_hashes = self._build_hash_list(diff_norm_lines)
 #                 common.verbose_print('\nHash list\n', hash_list, '\n')
-                self._patch_list.append(common.PatchInfo(path, magic_ext, ''.join(diff_patch_lines), diff_norm_lines, hash_list))
+                self._patch_list.append(common.PatchInfo(path, file_type, ''.join(diff_patch_lines), diff_norm_lines, hash_list, patch_hashes, common.ngram_size))
             else:
 #                 common.verbose_print('Adjusting ngram_size')
-#                 common.ngram_size = len(diff_norm_lines)
+                common.ngram_size = len(diff_norm_lines)
                 path = '[%s] %s #%d' % (patch_filename, diff_file, diff_cnt)
-                hash_list = self._build_hash_list(diff_norm_lines)
+                hash_list, patch_hashes = self._build_hash_list(diff_norm_lines)
 #                 common.verbose_print('\nHash list\n')
 #                 common.verbose_print(hash_list)
-                self._patch_list.append(common.PatchInfo(path, magic_ext, ''.join(diff_patch_lines), diff_norm_lines, hash_list))
+                self._patch_list.append(common.PatchInfo(path, file_type, ''.join(diff_patch_lines), diff_norm_lines, hash_list, patch_hashes, common.ngram_size))
             if added_lines:
                 added_norm_lines = []
                 for added in added_lines:
-                    added_norm_lines.append(self._normalize(''.join(added), magic_ext).split())
+                    added_norm_lines.append(self._normalize(''.join(added), file_type).split())
                     self._only_added.append(added_norm_lines)
 #                     hash1_a = common.fnv1a_hash(added) & (common.bloomfilter_size-1)
 #                     hash2_a = common.djb2_hash(added) & (common.bloomfilter_size-1)
 #                     hash3_a = common.sdbm_hash(added) & (common.bloomfilter_size-1)
 #                     hash_list_added = [hash1_a, hash2_a, hash3_a]
 
-    def _normalize(self, patch, ext):
+    def _normalize(self, patch, fileExt):
         '''
         Normalize a patch file
-        
-        Args:
-            patch_path (String): path to the patch
-            ext (String): file extension
-        
-        Return:
-            patch (String): patch file which is normalized and converted to lowercase
         '''
         # Language-specific optimization
-        if ext==common.FileExt.C or ext==common.FileExt.Java:
-            patch = ''.join([c.group('noncomment') for c in common.c_regex.finditer(patch) if c.group('noncomment')])
-            patch = ''.join([c.group('noncomment') for c in common.c_partial_comment_regex.finditer(patch) if c.group('noncomment')])
-        elif ext==common.FileExt.ShellScript:
-            patch = ''.join([c.group('noncomment') for c in common.shellscript_regex.finditer(patch) if c.group('noncomment')])
-        elif ext==common.FileExt.Python:
-            patch = re.sub(re.compile("'''.*?'''", re.DOTALL ), "", patch) # Remove multi-line comments with single quotes
-            patch = re.sub(re.compile('""".*?"""', re.DOTALL ), "", patch) # Remove multi-line comments with double quotes
-            patch = re.sub(re.compile("#.*?\n"), "", patch) # Remove single line comments
-        elif ext==common.FileExt.Perl:
-            patch = ''.join([c.group('noncomment') for c in common.perl_regex.finditer(patch) if c.group('noncomment')])
-        elif ext==common.FileExt.PHP:
-            patch = ''.join([c.group('noncomment') for c in common.php_regex.finditer(patch) if c.group('noncomment')])
-            patch = ''.join([c.group('noncomment') for c in common.c_partial_comment_regex.finditer(patch) if c.group('noncomment')])
-        elif ext==common.FileExt.Ruby:
-            patch = ''.join([c.group('noncomment') for c in common.ruby_regex.finditer(patch) if c.group('noncomment')])
-            patch = ''.join([c.group('noncomment') for c in common.ruby_partial_comment_regex.finditer(patch) if c.group('noncomment')])
-        elif ext==common.FileExt.JavaScript or ext==common.FileExt.TypeScript:
-            patch = ''.join([c.group('noncomment') for c in common.js_regex.finditer(patch) if c.group('noncomment')])
-            patch = ''.join([c.group('noncomment') for c in common.c_partial_comment_regex.finditer(patch) if c.group('noncomment')])
+        # if ext==common.FileExt.C or ext==common.FileExt.Java:
+        #     patch = ''.join([c.group('noncomment') for c in common.c_regex.finditer(patch) if c.group('noncomment')])
+        #     patch = ''.join([c.group('noncomment') for c in common.c_partial_comment_regex.finditer(patch) if c.group('noncomment')])
+        # elif ext==common.FileExt.ShellScript:
+        #     patch = ''.join([c.group('noncomment') for c in common.shellscript_regex.finditer(patch) if c.group('noncomment')])
+        # elif ext==common.FileExt.Python:
+        #     patch = ''.join([c.group('noncomment') for c in common.py_regex.finditer(patch) if c.group('noncomment')])
+        #     patch = ''.join([c.group('noncomment') for c in common.py_multiline_1_regex.finditer(patch) if c.group('noncomment')])
+        #     patch = ''.join([c.group('noncomment') for c in common.py_multiline_2_regex.finditer(patch) if c.group('noncomment')])
+        # elif ext==common.FileExt.Perl:
+        #     patch = ''.join([c.group('noncomment') for c in common.perl_regex.finditer(patch) if c.group('noncomment')])
+        # elif ext==common.FileExt.PHP:
+        #     patch = ''.join([c.group('noncomment') for c in common.php_regex.finditer(patch) if c.group('noncomment')])
+        #     patch = ''.join([c.group('noncomment') for c in common.c_partial_comment_regex.finditer(patch) if c.group('noncomment')])
+        # elif ext==common.FileExt.Ruby:
+        #     patch = ''.join([c.group('noncomment') for c in common.ruby_regex.finditer(patch) if c.group('noncomment')])
+        #     patch = ''.join([c.group('noncomment') for c in common.ruby_partial_comment_regex.finditer(patch) if c.group('noncomment')])
+        # elif ext == common.FileExt.scala or ext == common.FileExt.js or ext==common.FileExt.cpp:
+        #     patch = ''.join([c.group('noncomment') for c in common.js_regex.finditer(patch) if c.group('noncomment')])
+        #     patch = ''.join([c.group('noncomment') for c in common.js_partial_comment_regex.finditer(patch) if c.group('noncomment')])
+        # elif ext == common.FileExt.yaml:
+        #     patch = ''.join([c.group('noncomment') for c in common.yaml_regex.finditer(patch) if c.group('noncomment')])
+        #     patch = re.sub(common.yaml_double_quote_regex, "", patch)
+        #     patch = re.sub(common.yaml_single_quote_regex, "", patch)
+        _patch = helpers.remove_comments(patch, fileExt)
         # Remove whitespaces except newlines
-        patch = common.whitespaces_regex.sub("", patch)
+        patch = common.whitespaces_regex.sub("", _patch)
         # Convert into lowercases
         return patch.lower()
 
     def _build_hash_list(self, diff_norm_lines):
         '''
         Build a hash list
-
-        Args:
-            diff_norm_lines (String): diff norm lines
-        
-        Return:
-            hash_list: 
         '''
         hash_list = []
+#         print('common.ngram_size', common.ngram_size)
         num_ngram = len(diff_norm_lines) - common.ngram_size + 1
-        
+        patch_hashes = []
         for i in range(0, num_ngram):
             ngram = ''.join(diff_norm_lines[i:i+common.ngram_size])
             hash1 = common.fnv1a_hash(ngram) & (common.bloomfilter_size-1)
@@ -322,45 +310,41 @@ class PatchLoader(object):
             hash_list.append(hash1)
             hash_list.append(hash2)
             hash_list.append(hash3)
+            patch_hashes.append([ngram, [hash1, hash2, hash3]])
             
             self._hashes[hash1] = ngram
             self._hashes[hash2] = ngram
             self._hashes[hash3] = ngram
-        return hash_list
+        return hash_list, patch_hashes
 
     def _get_file_type(self, file_path):
         '''
-        Guess a file type based upon a file extension (mimetypes module)
-        Args:
-            file_path: the file path
-        Return:
-            magic_ext
+        Guess a file type based upon a file extension
         '''
-        file_type, encoding = mimetypes.guess_type(file_path)
-        magic_ext = None
-        if file_type is None:
-            magic_ext = common.FileExt.Text
-        else:
-            main_type, sub_type = file_type.split('/')
-            if sub_type.startswith('x-c'):
-                magic_ext = common.FileExt.C
-            elif sub_type == 'x-java':
-                magic_ext = common.FileExt.Java
-            elif sub_type == 'x-kotlin':
-                magic_ext = common.FileExt.Kotlin
-            elif sub_type == 'x-sh':
-                magic_ext = common.FileExt.ShellScript
-            elif sub_type == 'x-perl':
-                magic_ext = common.FileExt.Perl
-            elif sub_type == 'x-python':
-                magic_ext = common.FileExt.Python
-            elif sub_type == 'x-httpd-php':
-                magic_ext = common.FileExt.PHP
-            elif sub_type == 'x-ruby':
-                magic_ext = common.FileExt.Ruby
-            else:
-                magic_ext = common.FileExt.Text
-        return magic_ext
+        return helpers.get_file_type(file_path)
+#         file_type, encoding = mimetypes.guess_type(file_path)
+#         magic_ext = None
+#         if file_type is None:
+#             magic_ext = common.FileExt.Text
+#         else:
+#             main_type, sub_type = file_type.spxlit('/')
+#             if sub_type.startswith('x-c'):
+#                 magic_ext = common.FileExt.C
+#             elif sub_type == 'x-java':
+#                 magic_ext = common.FileExt.Java
+#             elif sub_type == 'x-sh':
+#                 magic_ext = common.FileExt.ShellScript
+#             elif sub_type == 'x-perl':
+#                 magic_ext = common.FileExt.Perl
+#             elif sub_type == 'x-python':
+#                 magic_ext = common.FileExt.Python
+#             elif sub_type == 'x-httpd-php':
+#                 magic_ext = common.FileExt.PHP
+#             elif sub_type == 'x-ruby':
+#                 magic_ext = common.FileExt.Ruby
+#             else:
+#                 magic_ext = common.FileExt.Text
+#         return magic_ext
 
     def items(self):
         return self._patch_list

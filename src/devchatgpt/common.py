@@ -7,7 +7,7 @@ import os
 import re
 import pickle
 from collections import namedtuple
-from constants import constant
+import constant,helpers
 
 
 # global variables
@@ -18,8 +18,14 @@ magic_cookie = constant.MAGIC_COOKIE
 bloomfilter_size = constant.BLOOMFILTER_SIZE
 min_mn_ratio = constant.MIN_MN_RATIO
 
+# PatchInfo = namedtuple('PatchInfo',\
+#         ['file_path', 'file_ext', 'orig_lines', 'norm_lines', 'hash_list'])
+# SourceInfo = namedtuple('SourceInfo',\
+#         ['file_path', 'file_ext', 'orig_lines', 'norm_lines'])
+# ContextInfo = namedtuple('ContextInfo',\
+#         ['source_id', 'prev_context_line', 'start_line', 'end_line', 'next_context_line'])
 PatchInfo = namedtuple('PatchInfo',\
-        ['file_path', 'file_ext', 'orig_lines', 'norm_lines', 'hash_list'])
+        ['file_path', 'file_ext', 'orig_lines', 'norm_lines', 'hash_list', 'patch_hashes', 'ngram_size'])
 SourceInfo = namedtuple('SourceInfo',\
         ['file_path', 'file_ext', 'orig_lines', 'norm_lines'])
 ContextInfo = namedtuple('ContextInfo',\
@@ -38,9 +44,9 @@ class FileExt:
     Perl        = 6
     PHP         = 7
     Ruby        = 8
-    Yaml        = 9
+    yaml        = 9
     Scala       = 10
-    JupyterNB   = 11
+    ipynb       = 11
     JavaScript  = 12
     JSON        = 13
     Kotlin      = 14
@@ -54,12 +60,19 @@ class FileExt:
     VUE         = 22
     REACT       = 23
     Bash        = 24
+    markdown    = 25
+    goland      = 26
+    html        = 27
+    CSS         = 28
+    Fsharp      = 29
+    REGEX       = 30
+    conf        = 31
 
 # html escape chracters
 html_escape_dict = { '&': '&amp;', '>': '&gt;', '<': '&lt;', '"': '&quot;', '\'': '&apos;' }
 
 # regex for comments
-# C
+# C, java, go
 c_regex = re.compile(r'(?P<comment>//.*?$|[{}]+)|(?P<multilinecomment>/\*.*?\*/)|(?P<noncomment>\'(\\.|[^\\\'])*\'|"(\\.|[^\\"])*"|.[^/\'"]*)', re.DOTALL | re.MULTILINE)
 c_partial_comment_regex = re.compile(r'(?P<comment>/\*.*?$|^.*?\*/)|(?P<noncomment>\'(\\.|[^\\\'])*\'|"(\\.|[^\\"])*"|.[^/\'"{}]*)', re.DOTALL)
 
@@ -90,7 +103,7 @@ py_regex = re.compile(r'(?P<comment>#.*?$)|(?P<noncomment>\'(\\.|[^\\\'])*\'|"(\
 py_multiline_1_regex = re.compile(r'(?P<multilinecomment>""".*?""")|(?P<noncomment>\'(\\.|[^\\\'])*\'|"(\\.|[^\\"])*"|.[^/\'"]*)', re.DOTALL | re.MULTILINE)
 py_multiline_2_regex = re.compile(r'(?P<multilinecomment>\'\'\'.*?\'\'\')|(?P<noncomment>\'(\\.|[^\\\'])*\'|"(\\.|[^\\"])*"|.[^/\'"]*)', re.DOTALL | re.MULTILINE)
 
-# XML
+# XML, MD
 xml_regex = re.compile(r'(?P<multilinecomment><!--.*?-->)|(?P<noncomment>\'(\\.|[^\\\'])*\'|"(\\.|[^\\"])*"|.[^/\'"]*)', re.DOTALL | re.MULTILINE)
 
 # regex for whitespaces except newlines
@@ -98,18 +111,11 @@ whitespaces_regex = re.compile(r'[\t\x0b\x0c\r ]+')
 
 
 def file_type(file_path):
-    '''
-    Guess a file type based upon a file extension (mimetypes module)
-    
-    Args:
-        file_path (String): the file path
-    Return:
-        magic_ext
-    '''
-    try:
-        return magic_cookie.from_file(file_path)
-    except AttributeError:
-        return magic_cookie.file(file_path)
+    return helpers.get_file_type(file_path)
+    # try:
+    #     return magic_cookie.from_file(file_path)
+    # except AttributeError:
+    #     return magic_cookie.file(file_path)
 
 def verbose_print(text):
     verbose_mode = False
