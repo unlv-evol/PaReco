@@ -2,11 +2,16 @@
 tokens.txt
 src/notebooks/Repos_files
 src/notebooks/Repos_results
+src/devchatgpt/notebooks/Repos_files
+src/devchatgpt/notebooks/Repos_results
+src/devchatgpt/data
+src/devchatgpt/output
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+.vscode
 
 # C extensions
 *.so

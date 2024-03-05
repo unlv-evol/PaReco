@@ -1,9 +1,9 @@
 import time
 from constants import constant
 from utils import helpers
+
 from datetime import datetime
 import pandas as pd
-
 
 def fetch_pullrequest_data(mainline, variant, pullrequests, variant_sha, token_list, ct):
     print('Fetching files and commit information from patches...')
@@ -16,6 +16,8 @@ def fetch_pullrequest_data(mainline, variant, pullrequests, variant_sha, token_l
     for pullrequest in pullrequests:
         try:
             pullrequest_data[pullrequest] = {}
+            # used to include pr that contain java files only
+            found = 0
 
             # Get the PR
             if ct == token_length:
@@ -60,45 +62,49 @@ def fetch_pullrequest_data(mainline, variant, pullrequests, variant_sha, token_l
             commits_data = {}
             try:
                 for file in  pullrequest_files_merged:
+
                     file_name = file['filename']
-                    commits_data[file_name] = list()
-                    if ct == token_length:
-                        ct = 0
-                        
-                        if helpers.find_file(file_name, variant, token_list[ct], variant_sha):
-                            sub = {}
-                            sub['status'] = file['status']
-                            sub['additions'] = file['additions']
-                            sub['deletions'] = file['deletions']
-                            sub['changes'] = file['changes']
-                            sub['patch'] = file['patch']
-                            commits_data[file_name].append(sub)
-                        else:
+                    
+                    # # ignore non java files
+                    if file_name.endswith('.java'):
+                        found = 1
+                        commits_data[file_name] = list()
+                        if ct == token_length:
+                            ct = 0
+                            
+                            if helpers.find_file(file_name, variant, token_list[ct], variant_sha):
+                                sub = {}
+                                sub['status'] = file['status']
+                                sub['additions'] = file['additions']
+                                sub['deletions'] = file['deletions']
+                                sub['changes'] = file['changes']
+                                sub['patch'] = file['patch']
+                                commits_data[file_name].append(sub)
+                            else:
                             # print(f"File missing in target_head.......: {file_name}, Status: {file['status']}")
-                            try:
-                                previous_name = file['previous_filename']
-                            except:
-                                previous_name = "null"
-                            missing = {
-                                'filename': file_name,
-                                'previous_name': previous_name,
-                                'pullrequest_id': pullrequest,
-                                'status': file['status'],
-                                'additions': file['additions'],
-                                'deletions': file['deletions'],
-                                'changes': file['changes']
-                            }
-                            missing_files.append(missing)
-                    ct += 1
+
+                                missing = {
+                                    'pullrequest_id': pullrequest,
+                                    'filename': file_name,
+                                    'status': file['status'],
+                                    'additions': file['additions'],
+                                    'deletions': file['deletions'],
+                                    'changes': file['changes']
+                                }
+                                missing_files.append(missing)
+                        ct += 1
             except Exception as e:
                 print(e)
                 print('This should only happen if there are no files changed in a pull request')
-            pullrequest_data[pullrequest]['commits_data'].append(commits_data)
+            if found == 0:
+                pullrequest_data.pop(pullrequest)
+            else:
+                pullrequest_data[pullrequest]['commits_data'].append(commits_data)
         except Exception as e:
             print("Error while trying to fetch pull request data....: ", e)
    
     df = pd.DataFrame(missing_files)
-    df.to_csv('missing_files.csv')
+    df.to_csv('missing_files_java-apache.csv')
 
     end = time.time()
     runtime = end - start

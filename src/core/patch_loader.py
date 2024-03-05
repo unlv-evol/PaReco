@@ -276,7 +276,7 @@ class PatchLoader(object):
             patch (String): patch file which is normalized and converted to lowercase
         '''
         # Language-specific optimization
-        if ext==common.FileExt.C or ext==common.FileExt.Java or ext==common.FileExt.Scala:
+        if ext==common.FileExt.C or ext==common.FileExt.Java:
             patch = ''.join([c.group('noncomment') for c in common.c_regex.finditer(patch) if c.group('noncomment')])
             patch = ''.join([c.group('noncomment') for c in common.c_partial_comment_regex.finditer(patch) if c.group('noncomment')])
         elif ext==common.FileExt.ShellScript:
@@ -344,8 +344,6 @@ class PatchLoader(object):
                 magic_ext = common.FileExt.C
             elif sub_type == 'x-java':
                 magic_ext = common.FileExt.Java
-            elif sub_type == 'x-scala':
-                magic_ext = common.FileExt.Scala
             elif sub_type == 'x-sh':
                 magic_ext = common.FileExt.ShellScript
             elif sub_type == 'x-perl':
