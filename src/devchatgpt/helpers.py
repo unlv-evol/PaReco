@@ -126,7 +126,7 @@ def get_file_type(file_path):
             file_ext = common.FileExt.PHP
         elif ext == 'rb':
             file_ext = common.FileExt.Ruby
-        elif ext == 'js' or ext == 'jsx' or ext == 'ts' or ext == 'vue':
+        elif ext in['js', 'jsx', 'ts', 'vue', 'svelte']:
             file_ext = common.FileExt.JavaScript
         elif ext == 'scala':
             file_ext = common.FileExt.Scala
@@ -214,7 +214,8 @@ def remove_comments(source, fileExt):
                     newlines_cnt -= 1
         source = ''.join(norm_lines)
 
-    elif fileExt in [common.FileExt.Scala, common.FileExt.JavaScript, common.FileExt.TypeScript, common.FileExt.Kotlin, common.FileExt.gradle]:
+    elif fileExt in [common.FileExt.Scala, common.FileExt.JavaScript, common.FileExt.TypeScript, 
+                     common.FileExt.Kotlin, common.FileExt.gradle, common.FileExt.svelte]:
         source = ''.join([c.group('noncomment') for c in common.js_regex.finditer(source) if c.group('noncomment')])
         source = ''.join(
             [c.group('noncomment') for c in common.js_partial_comment_regex.finditer(source) if c.group('noncomment')])

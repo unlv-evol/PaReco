@@ -211,10 +211,6 @@ class PatchLoader(object):
                     added_norm_lines = []
                     for added in added_lines:
                         added_norm_lines.append(self._normalize(''.join(added), file_type).split())
-#                         hash1_a = common.fnv1a_hash(ngram) & (common.bloomfilter_size-1)
-#                         hash2_a = common.djb2_hash(ngram) & (common.bloomfilter_size-1)
-#                         hash3_a = common.sdbm_hash(ngram) & (common.bloomfilter_size-1)
-#                         hash_list_added = [hash1_a, hash2_a, hash3_a]
                         self._only_added.append(added_norm_lines)
                     del added_lines[:]
                     
@@ -254,40 +250,11 @@ class PatchLoader(object):
                 for added in added_lines:
                     added_norm_lines.append(self._normalize(''.join(added), file_type).split())
                     self._only_added.append(added_norm_lines)
-#                     hash1_a = common.fnv1a_hash(added) & (common.bloomfilter_size-1)
-#                     hash2_a = common.djb2_hash(added) & (common.bloomfilter_size-1)
-#                     hash3_a = common.sdbm_hash(added) & (common.bloomfilter_size-1)
-#                     hash_list_added = [hash1_a, hash2_a, hash3_a]
 
     def _normalize(self, patch, fileExt):
         '''
         Normalize a patch file
         '''
-        # Language-specific optimization
-        # if ext==common.FileExt.C or ext==common.FileExt.Java:
-        #     patch = ''.join([c.group('noncomment') for c in common.c_regex.finditer(patch) if c.group('noncomment')])
-        #     patch = ''.join([c.group('noncomment') for c in common.c_partial_comment_regex.finditer(patch) if c.group('noncomment')])
-        # elif ext==common.FileExt.ShellScript:
-        #     patch = ''.join([c.group('noncomment') for c in common.shellscript_regex.finditer(patch) if c.group('noncomment')])
-        # elif ext==common.FileExt.Python:
-        #     patch = ''.join([c.group('noncomment') for c in common.py_regex.finditer(patch) if c.group('noncomment')])
-        #     patch = ''.join([c.group('noncomment') for c in common.py_multiline_1_regex.finditer(patch) if c.group('noncomment')])
-        #     patch = ''.join([c.group('noncomment') for c in common.py_multiline_2_regex.finditer(patch) if c.group('noncomment')])
-        # elif ext==common.FileExt.Perl:
-        #     patch = ''.join([c.group('noncomment') for c in common.perl_regex.finditer(patch) if c.group('noncomment')])
-        # elif ext==common.FileExt.PHP:
-        #     patch = ''.join([c.group('noncomment') for c in common.php_regex.finditer(patch) if c.group('noncomment')])
-        #     patch = ''.join([c.group('noncomment') for c in common.c_partial_comment_regex.finditer(patch) if c.group('noncomment')])
-        # elif ext==common.FileExt.Ruby:
-        #     patch = ''.join([c.group('noncomment') for c in common.ruby_regex.finditer(patch) if c.group('noncomment')])
-        #     patch = ''.join([c.group('noncomment') for c in common.ruby_partial_comment_regex.finditer(patch) if c.group('noncomment')])
-        # elif ext == common.FileExt.scala or ext == common.FileExt.js or ext==common.FileExt.cpp:
-        #     patch = ''.join([c.group('noncomment') for c in common.js_regex.finditer(patch) if c.group('noncomment')])
-        #     patch = ''.join([c.group('noncomment') for c in common.js_partial_comment_regex.finditer(patch) if c.group('noncomment')])
-        # elif ext == common.FileExt.yaml:
-        #     patch = ''.join([c.group('noncomment') for c in common.yaml_regex.finditer(patch) if c.group('noncomment')])
-        #     patch = re.sub(common.yaml_double_quote_regex, "", patch)
-        #     patch = re.sub(common.yaml_single_quote_regex, "", patch)
         _patch = helpers.remove_comments(patch, fileExt)
         # Remove whitespaces except newlines
         patch = common.whitespaces_regex.sub("", _patch)
@@ -322,29 +289,6 @@ class PatchLoader(object):
         Guess a file type based upon a file extension
         '''
         return helpers.get_file_type(file_path)
-#         file_type, encoding = mimetypes.guess_type(file_path)
-#         magic_ext = None
-#         if file_type is None:
-#             magic_ext = common.FileExt.Text
-#         else:
-#             main_type, sub_type = file_type.spxlit('/')
-#             if sub_type.startswith('x-c'):
-#                 magic_ext = common.FileExt.C
-#             elif sub_type == 'x-java':
-#                 magic_ext = common.FileExt.Java
-#             elif sub_type == 'x-sh':
-#                 magic_ext = common.FileExt.ShellScript
-#             elif sub_type == 'x-perl':
-#                 magic_ext = common.FileExt.Perl
-#             elif sub_type == 'x-python':
-#                 magic_ext = common.FileExt.Python
-#             elif sub_type == 'x-httpd-php':
-#                 magic_ext = common.FileExt.PHP
-#             elif sub_type == 'x-ruby':
-#                 magic_ext = common.FileExt.Ruby
-#             else:
-#                 magic_ext = common.FileExt.Text
-#         return magic_ext
 
     def items(self):
         return self._patch_list

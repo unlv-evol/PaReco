@@ -67,6 +67,7 @@ class FileExt:
     Fsharp      = 29
     REGEX       = 30
     conf        = 31
+    svelte      = 32
 
 # html escape chracters
 html_escape_dict = { '&': '&amp;', '>': '&gt;', '<': '&lt;', '"': '&quot;', '\'': '&apos;' }

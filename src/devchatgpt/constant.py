@@ -48,6 +48,6 @@ EXTENSIONS = {
     "jsx":          "jsx",
     "fsharp":       "fs",
     "regex":        "regex",
-    "svelte":       "js",
+    "svelte":       "svelte",
     "nginx":        "conf"
 }
