@@ -1,12 +1,9 @@
 import time
 import pandas as pd
-import utils.common as common
-import utils.helpers as helpers
 import src.core.data_extractor as dataloader
 import src.core.classifier as classifier
-import utils.totals as totals
-import utils.analysis as analysis
-from utils.helpers import divergence_date
+from src.utils import analysis, totals, helpers, common
+from src.utils.helpers import divergence_date
 from src.core.patch_extractor import pullrequest_patches
     
 class PaReco:
@@ -122,7 +119,7 @@ class PaReco:
                             if len(files[file]) != 0:
                                 try:
                                     if file_ext != 1:
-                                        common.ngram=4
+                                        common.ngram = 4
                                         fileName = ''
                                         fileDir = ''
 
