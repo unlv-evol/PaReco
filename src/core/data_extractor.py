@@ -1,6 +1,6 @@
 import time
-from constants import constant
-from utils import helpers
+from src.constants import constant
+from src.utils import helpers
 
 from datetime import datetime
 import pandas as pd

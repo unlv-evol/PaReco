@@ -7,7 +7,7 @@ import sys
 import os
 import re
 import time
-from utils import common
+from src.utils import common
 
 try:
     import bitarray

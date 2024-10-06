@@ -7,7 +7,7 @@ import os
 import re
 import time
 import mimetypes
-from utils import common
+from src.utils import common
 from html.parser import HTMLParser
 
 class PatchLoader(object):

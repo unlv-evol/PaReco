@@ -1,7 +1,7 @@
 import difflib
 import os
-from constants import constant
-from utils import helpers
+from src.constants import constant
+from src.utils import helpers
 from . import patch_loader as patchloader
 from . import source_loader as sourceloader
 
