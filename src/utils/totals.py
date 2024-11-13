@@ -146,4 +146,5 @@ def count_all_classifications(pr_classes):
             all_classes['CC'] += 1
         elif v == 'ERROR':
             all_classes['ERROR'] += 1
+    print(all_classes)
     return all_classes

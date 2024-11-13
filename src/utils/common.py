@@ -7,7 +7,7 @@ import os
 import re
 import pickle
 from collections import namedtuple
-from constants import constant
+from src.constants import constant
 
 
 # global variables
