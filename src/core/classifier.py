@@ -137,7 +137,7 @@ def get_file_after_patch(repo_dir, mainline, sha, pair_nr, pr_nr, file, fileDir,
         print("Could not save file after patch: ", e)
     return fileAfterPatchDir + fileName, fileAfterPatchUrl
 
-def get_file_from_dest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName, token):
+def get_file_from_dest(repo_dir, variant, sha, pair_nr, fileDir, file, fileName, token):
     destPath = f'{repo_dir}{str(pair_nr)}/{variant}/{fileDir}'
     
     if not os.path.exists(destPath):
@@ -151,7 +151,7 @@ def get_file_from_dest(repo_dir, variant, sha, pair_nr, file, fileDir, fileName,
         helpers.save_file(destFile.content, destPath, fileName)
     except Exception as e:
         print("Could not save file from upstream")
-    return destPath + fileName, dest_url
+    return f'{destPath}{fileName}', dest_url
     
 def calc_match_percentage(results, hashes):
     # Not called anywhere at the moment
